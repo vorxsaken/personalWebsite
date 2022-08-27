@@ -62,9 +62,9 @@ function Home() {
           >
             <div
               className="w-[220px] h-[220px] mt-10 border-4 border-white rounded-full bg-black 
-            overflow-hidden relative drop-shadow-lg bg-cover"
+            overflow-hidden relative drop-shadow-lg bg-cover bg-right"
               style={{
-                backgroundImage: `url(${require("../assets/img/unnamed.jpg")})`,
+                backgroundImage: `url(${require("../assets/img/1.jpg")})`,
               }}
             ></div>
             <p className="text-3xl font-bold text-gray-500 max-w-lg text-center">

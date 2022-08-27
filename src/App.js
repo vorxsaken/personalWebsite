@@ -12,10 +12,14 @@ import Category from "./view/Category";
 import About from "./view/About";
 import Footer from "./components/Footer";
 import Login from "./view/Login";
+import Unknown from "./view/Unknown";
+import CreatePost from "./view/CreatePost";
+import { useSelector } from "react-redux"
 
 function App() {
-  const location = useLocation()
-  
+  const location = useLocation();
+  const access = useSelector(state => state.user.adminAccess);
+
   return (
     <div className="overflow-x-hidden flex flex-col">
       <Navbar />
@@ -26,7 +30,17 @@ function App() {
             <Route path="posts" element={<Posts />} />
             <Route path="category" element={<Category />} />
             <Route path="about" element={<About />} />
-            <Route path="wkwkwk" element={<Login />} />
+            <Route path="*" element={<Unknown />} />
+            {
+              access && (
+                <Route path="create-post" element={<CreatePost />} />
+              )
+            }
+            {
+              !access && (
+                <Route path="wkwkwk" element={<Login />} />
+              )
+            }
           </Routes>
         </AnimatePresence>
       </main>

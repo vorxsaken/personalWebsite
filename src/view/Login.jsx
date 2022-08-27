@@ -1,10 +1,40 @@
 import React, { useEffect, useState } from "react";
 import Buttons from "../components/Buttons";
-import { IoMdEyeOff, IoMdEye} from "react-icons/io"
+import { IoMdEyeOff, IoMdEye} from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+
 function Login() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [isShow, setIsShow] = useState(false);
+    const nav = useNavigate();
+
+    const login = () => {
+      const data = {
+        user: username,
+        password: password
+      }
+      fetch("http://localhost:3010/admin/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {"Content-type": "application/json; charset=UTF-8"}
+      })
+      .then(result => {
+        if(result.status == 500){
+          window.alert("username atau password salah")
+        }else if(result.status == 501){
+          window.alert("field tidak boleh kosong")
+        }else {
+          return result.json();
+        }
+      })
+      .then(json => {
+        localStorage.setItem("_xvd", json.userToken);
+        nav("../", {replace: true});
+        window.location.reload();
+      })
+      .catch((err) => {console.log(err)})
+    }
 
     return (
     <div className="w-full h-auto min-h-[80vh] flex justify-center items-start mt-16">
@@ -29,7 +59,7 @@ function Login() {
           </div>
         </div>
         <div className="flex justify-center">
-          <Buttons>Login</Buttons>
+          <Buttons onClick={login}>Login</Buttons>
         </div>
       </div>
     </div>
