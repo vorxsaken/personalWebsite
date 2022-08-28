@@ -12,7 +12,7 @@ export async function Login(req, res) {
                 {user_id: data[0]._id, user},
                 process.env.TOKEN_KEY,
                 {
-                    expiresIn: "1h"
+                    expiresIn: "20h"
                 }
             );
             await mongo.db("Personal_Cms").collection("admins").updateOne({_id: data[0]._id}, {$set: { token: token}});
