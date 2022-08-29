@@ -17,12 +17,27 @@ export async function Login(req, res) {
             );
             await mongo.db("Personal_Cms").collection("admins").updateOne({_id: data[0]._id}, {$set: { token: token}});
             res.send({userToken: token});
+            mongo.close();
         } else {
             res.status(500).send({ error: "username atau password salah" })
         }
     }else{
         res.status(501).send({error: "field tidak boleh kosong"})
     }
+}
+
+export async function uploadPost(req, res){
+    const url = req.protocol + '://' + req.get('host');
+    const { title, text, tags} = req.body;
+    await mongo.db("Personal_Cms").collection("posts").insertOne({
+        title: title,
+        text: text,
+        tags: tags,
+        imageHeader: url + '/upload/images/' + req.file.filename
+    })
+
+    res.status(200).send('file upload successfully');
+    mongo.close();
 }
 
 export async function addPost(req, res) {
