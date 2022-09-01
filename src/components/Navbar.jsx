@@ -1,5 +1,5 @@
 import React from "react";
-import { FaGithub, FaInstagram, FaPencilAlt } from "react-icons/fa"
+import { FaGithub, FaInstagram, FaPencilAlt, FaFolderPlus } from "react-icons/fa"
 import { NavLink, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useSelector } from "react-redux"
@@ -14,6 +14,9 @@ function Navbar() {
     }
     const createPost = () => {
       navigate("../create-post");  
+    }
+    const createProject = () => {
+      navigate("../create-project")
     }
     return (
     <header className="fixed top-0 p-4 w-full flex flex-row gap-4 justify-center border-b-[1px] select-none z-50
@@ -31,7 +34,7 @@ function Navbar() {
             Posts
           </NavLink>
           <NavLink to="category"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>
-            Category
+            Project
           </NavLink>
           <NavLink to="about"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>
             About
@@ -47,9 +50,13 @@ function Navbar() {
         <div className="flex flex-row items-center gap-4 pl-4">
             <FaGithub className="text-2xl text-gray-400 hover:text-gray-600 cursor-pointer" />
             <FaInstagram className="text-2xl font-semibold text-gray-400 hover:text-gray-600 cursor-pointer" />
+
             {
               access && (
-                <FaPencilAlt onClick={ createPost } className="text-xl font-semibold text-gray-400 hover:text-gray-600 cursor-pointer"/>
+                <span className="flex flex-row gap-4">
+                  <FaFolderPlus onClick={ createProject } className="text-xl  font-semibold text-gray-400 hover:text-gray-600 cursor-pointer" />
+                  <FaPencilAlt onClick={ createPost } className="text-lg font-semibold text-gray-400 hover:text-gray-600 cursor-pointer"/>
+                </span>
               )
             }
         </div>

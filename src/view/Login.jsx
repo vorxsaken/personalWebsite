@@ -59,7 +59,7 @@ function Login() {
           </div>
         </div>
         <div className="flex justify-center">
-          <Buttons onClick={login}>Login</Buttons>
+          <Buttons onClick={login} text="Login"></Buttons>
         </div>
       </div>
     </div>

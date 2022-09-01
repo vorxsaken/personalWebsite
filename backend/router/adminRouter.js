@@ -1,42 +1,56 @@
-import {Router} from "express";
-import { addPost, Login, uploadPost } from "../controller/adminController.js";
+import { Router } from "express";
+import {
+  addPost,
+  Login,
+  uploadPost,
+  uploadProject,
+  getPosts,
+  getProjects,
+} from "../controller/adminController.js";
 import { verifyToken } from "../middleware/adminMiddleware.js";
-import multer from "multer"
+import multer from "multer";
 
 const adminRouter = Router();
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'upload/images')
-    },
-    filename: (req, file, cb) => {
-        const filename = file.originalname.toLowerCase();
-        cb(null, new Date().getTime() + '-' + filename)
-    }
-})
+  destination: (req, file, cb) => {
+    cb(null, "upload/images");
+  },
+  filename: (req, file, cb) => {
+    const filename = file.originalname.toLowerCase();
+    cb(null, new Date().getTime() + "-" + filename);
+  },
+});
 
 var upload = multer({
-    storage: storage,
-    fileFilter: (req, file, cb) => {
-        if(file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg"){
-            cb(null, true)
-        }else {
-            cb(null, false);
-            return cb(new Error('not a file image'))
-        }
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("not a file image"));
     }
-})
+  },
+});
 
-adminRouter.get('/', (req, res, next) => {
-    next();
-})
-adminRouter.get('/test', (req, res) => {
-    res.send({data: "hello world"});
-})
-adminRouter.post('/login', Login);
-adminRouter.get('/addPost', addPost);
-adminRouter.post('/upload-file', upload.single('file'), uploadPost);
-adminRouter.post('/auth', verifyToken, (req, res) => {
-    res.send({adminAccess: true, decoded: req.user});
-})
+adminRouter.get("/", (req, res, next) => {
+  next();
+});
+adminRouter.get("/test", (req, res) => {
+  res.send({ data: "hello world" });
+});
+adminRouter.post("/login", Login);
+adminRouter.get("/addPost", addPost);
+adminRouter.post("/upload-post", upload.single("file"), uploadPost);
+adminRouter.get("/get-posts", getPosts);
+adminRouter.get("/get-projects", getProjects);
+adminRouter.post("/upload-project", upload.single("file"), uploadProject);
+adminRouter.post("/auth", verifyToken, (req, res) => {
+  res.send({ adminAccess: true, decoded: req.user });
+});
 
 export default adminRouter;

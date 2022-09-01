@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  Route,
-  Routes,
-  useLocation,
-} from 'react-router-dom';
+import { Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Home from "./view/Home";
@@ -14,11 +10,12 @@ import Footer from "./components/Footer";
 import Login from "./view/Login";
 import Unknown from "./view/Unknown";
 import CreatePost from "./view/CreatePost";
-import { useSelector } from "react-redux"
+import CreateProject from "./view/CreateProject";
+import { useSelector } from "react-redux";
 
 function App() {
   const location = useLocation();
-  const access = useSelector(state => state.user.adminAccess);
+  const access = useSelector((state) => state.user.adminAccess);
 
   return (
     <div className="overflow-x-hidden flex flex-col">
@@ -31,20 +28,17 @@ function App() {
             <Route path="category" element={<Category />} />
             <Route path="about" element={<About />} />
             <Route path="*" element={<Unknown />} />
-            {
-              access && (
+            {access && (
+              <>
                 <Route path="create-post" element={<CreatePost />} />
-              )
-            }
-            {
-              !access && (
-                <Route path="wkwkwk" element={<Login />} />
-              )
-            }
+                <Route path="create-project" element={<CreateProject />} />
+              </>
+            )}
+            {!access && <Route path="wkwkwk" element={<Login />} />}
           </Routes>
         </AnimatePresence>
       </main>
-     <Footer />
+      <Footer />
     </div>
   );
 }

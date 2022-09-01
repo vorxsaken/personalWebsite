@@ -49,7 +49,7 @@ function Home() {
       className="w-full h-full"
     >
       {/* profil container */}
-      <div className="w-full h-full">
+      <div className="w-full h-[85vh]">
         {/* avatar container */}
         <div
           className="w-full h-[80vh] flex justify-center items-center gap-3 bg-white 
@@ -82,51 +82,51 @@ function Home() {
 
       {/* content posts list summary */}
       <div className="w-full h-auto flex flex-col gap-2 bg-white mt-4">
-        <p className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
+        <motion.p
+        initial={{ opacity: 0, scale: 0 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+        className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
             className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
-            Recent Posts
+            Recent Projects
           </span>
-        </p>
+        </motion.p>
         <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {cards}
         </div>
         <div className="py-4 flex flex-row items-center justify-center">
-          <motion.span
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, type: "spring" }}
-          >
-            <Buttons>More ..</Buttons>
-          </motion.span>
+          <span>
+            <Buttons text="More .." />
+          </span>
         </div>
       </div>
 
       {/* constent project list summary */}
       <div className="w-full h-auto flex flex-col gap-2 bg-white">
-        <p className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
+        <motion.p 
+        initial={{ opacity: 0, scale: 0 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+        className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
             className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
             Recent Posts
           </span>
-        </p>
+        </motion.p>
         <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {projects}
         </div>
         <div className="py-4 flex flex-row items-center justify-center">
-        <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, type: "spring" }}
-          >
-            <Buttons>More ..</Buttons>
-          </motion.div>
+        <div>
+            <Buttons text="More .." />
+          </div>
         </div>
       </div>
     </motion.div>

@@ -7,9 +7,11 @@ import { BrowserRouter } from 'react-router-dom';
 import store from './app/store';
 import { Provider } from 'react-redux';
 import { authUser } from './slice/userSlice';
+import { getPosts } from './slice/postSlice';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 store.dispatch( authUser() );
+store.dispatch( getPosts() );
 root.render(
     <BrowserRouter>
         <Provider store={store}>
