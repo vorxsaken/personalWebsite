@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}",],
   theme: {
@@ -12,7 +13,6 @@ module.exports = {
       }
     },
   },
-  plugins: [],
   "tailwindCSS.trace.server": "verbose",
   "tailwindCSS.emmetCompletions": true,
   "tailwindCSS.cssLanguages": [ "css", "less", "postcss", "sass", "scss", "stylus", "vue", "jsx" ],

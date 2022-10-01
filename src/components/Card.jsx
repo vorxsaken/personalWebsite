@@ -13,10 +13,14 @@ function Card({img, title, des, row, tags}) {
         return des.length > 130 ? des.substr(0, 130) + ' ...' : des;
     }
     const hashtag = () => {
-        let tag = tags.split('#').filter(p => p != '' && p != ' ');
+        var tag = tags.split('#').filter(p => p != '' && p != ' ');
+        if(tag.length > 2){
+            tag = tag.slice(0, 2) 
+        }
         let hashTag = tag.map((t, index) => (
             <span key={index} className='rounded-md px-2 bg-gray-200 text-slate-800 text-xs'>#{t}</span>
         ))
+        
         return hashTag;
     }
     return (

@@ -17,6 +17,17 @@ const postSlice = createSlice({
     name: 'posts',
     initialState,
     reducers: {
+        addPost(state, action){
+            const { _id, title, subtitle, imageHeader, text, tags} = action.payload;
+            state.posts.push({
+                _id: _id,
+                title: title,
+                subtitle: subtitle,
+                imageHeader: imageHeader,
+                text: text,
+                tags: tags
+            })
+        }
     },
     extraReducers(builder){
         builder
@@ -30,4 +41,5 @@ const postSlice = createSlice({
     }
 })
 
-export default postSlice.reducer
+export const { addPost } = postSlice.actions;
+export default postSlice.reducer;

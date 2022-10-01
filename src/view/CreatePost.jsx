@@ -9,7 +9,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import TextAlign from "@tiptap/extension-text-align";
-import MenuBar from "../components/MenuBar"
+import MenuBar from "../components/MenuBar";
+import { useDispatch } from "react-redux";
+import { addPost } from "../slice/postSlice";
 
 function CreatePost() {
   const file = useRef(0);
@@ -20,6 +22,7 @@ function CreatePost() {
   const [blob, setBlob] = useState(null);
   const [tags, setTags] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
   
   const post = async () => {
     if (title && text && image && tags) {
@@ -34,7 +37,12 @@ function CreatePost() {
       await fetch("http://localhost:3010/admin/upload-post", {
         method: "POST",
         body: formData,
-      });
+      })
+      .then(payload => payload.json())
+      .then((data) => {
+        dispatch(addPost({_id: data.id, title, subtitle, text, imageHeader: data.imageHeader, tags}))
+      })
+      
       setTitle("");
       setSubtitle("");
       editor.commands.setContent("");

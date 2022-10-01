@@ -29,7 +29,7 @@ export async function uploadPost(req, res){
     const prefixUrl = req.protocol + '://' + req.get('host');
     const url = prefixUrl + '/upload/images/' + req.file.filename
     const { title, subtitle, text, tags} = req.body;
-    await mongo.db("Personal_Cms").collection("posts").insertOne({
+    const post = await mongo.db("Personal_Cms").collection("posts").insertOne({
         title: title,
         subtitle: subtitle,
         text: text,
@@ -37,7 +37,7 @@ export async function uploadPost(req, res){
         imageHeader: url
     })
 
-    res.status(200).send({message: 'Post Uploades Successfully', imageUrl: url});
+    res.status(200).send({message: 'Post Uploades Successfully',id: post.insertedId ,imageUrl: url});
 }
 
 export async function uploadProject(req, res){
