@@ -16,8 +16,8 @@ const storage = multer.diskStorage({
     cb(null, "upload/images");
   },
   filename: (req, file, cb) => {
-    const filename = file.originalname.toLowerCase();
-    cb(null, new Date().getTime() + "-" + filename);
+    const name = file.fieldname.toLowerCase();
+    cb(null, new Date().getTime() + "-" + name + '.jpg');
   },
 });
 
@@ -27,7 +27,8 @@ var upload = multer({
     if (
       file.mimetype == "image/png" ||
       file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg"
+      file.mimetype == "image/jpeg"||
+      file.mimetype == 'image/webp'
     ) {
       cb(null, true);
     } else {
@@ -36,6 +37,7 @@ var upload = multer({
     }
   },
 });
+
 
 adminRouter.get("/", (req, res, next) => {
   next();
@@ -48,7 +50,7 @@ adminRouter.get("/addPost", addPost);
 adminRouter.post("/upload-post", upload.single("file"), uploadPost);
 adminRouter.get("/get-posts", getPosts);
 adminRouter.get("/get-projects", getProjects);
-adminRouter.post("/upload-project", upload.single("file"), uploadProject);
+adminRouter.post("/upload-project", upload.fields([{name: 'src', maxCount: 6}, {name: 'pic', maxCount: 6}]), uploadProject);
 adminRouter.post("/auth", verifyToken, (req, res) => {
   res.send({ adminAccess: true, decoded: req.user });
 });

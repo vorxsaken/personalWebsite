@@ -57,7 +57,7 @@ function Posts() {
        placeholder:text-slate-600 focus:placeholder:text-slate-400"
         placeholder="Search ..."
       />
-      <div className="w-full h-auto flex flex-row justify-center gap-6">
+      <div className="w-full h-auto flex flex-row flex-wrap justify-center gap-6">
         {posts.length > 0 ? (
           cards
         ) : (

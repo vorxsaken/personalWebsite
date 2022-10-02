@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import adminRouter from "./router/adminRouter.js";
-
 const app = express();
 const port = 3010;
 

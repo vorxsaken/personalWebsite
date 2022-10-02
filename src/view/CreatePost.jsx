@@ -40,7 +40,7 @@ function CreatePost() {
       })
       .then(payload => payload.json())
       .then((data) => {
-        dispatch(addPost({_id: data.id, title, subtitle, text, imageHeader: data.imageHeader, tags}))
+        dispatch(addPost({_id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags}))
       })
       
       setTitle("");
