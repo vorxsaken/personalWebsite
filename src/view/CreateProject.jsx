@@ -4,6 +4,8 @@ import { FaPlusCircle } from "react-icons/fa";
 import { BsFillArrowLeftSquareFill, BsFillArrowRightSquareFill, BsFilePlusFill, BsFileMinus } from "react-icons/bs";
 import Buttons from "../components/Buttons";
 import Compressor from "compressorjs";
+import { useDispatch } from "react-redux";
+import { addProjects } from "../slice/projectsSlice.js";
 
 
 function CreateProject() {
@@ -21,6 +23,7 @@ function CreateProject() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMaxRight, setIsMaxRight] = useState(true);
   const [isNoLeft, setIsNoLeft] = useState(0);
+  const dispatch = useDispatch();
   var currentIndex = 0;
 
   const input1 = (index) => {
@@ -83,15 +86,21 @@ function CreateProject() {
       formData.append("title", title);
       formData.append("deskripsi", deskripsi);
       formData.append("github", github);
+      formData.append('created_at', new Date().toUTCString());
       for (let i = 0; i < blob.length; i++) {
         formData.append("src", blob[i]);
         formData.append('pic', pic[i]);
       }
 
+
       await fetch("http://localhost:3010/admin/upload-project", {
         method: "POST",
         body: formData,
-      });
+      })
+      .then(data => data.json())
+      .then((json) => {
+        dispatch(addProjects({_id: json._id, title, deskripsi, github, imageHeader: json.imageHeader}))
+      })
 
       setTitle("");
       setDeskripsi("");
@@ -185,7 +194,7 @@ function CreateProject() {
           {
             isMaxRight ? (
               <span className="absolute z-0 -right-14 cursor-pointer flex flex-col 
-              z-50 gap-2">
+               gap-2">
                 {
                   count < 6 && (
                     <BsFilePlusFill onClick={() => { addPreview() }} className="text-4xl font-semibold text-slate-600">
@@ -203,7 +212,7 @@ function CreateProject() {
               count < 6 && (
                 <motion.span
                   initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
-                  onClick={() => { scrollRight() }} className="absolute -right-14 cursor-pointer z-50">
+                  onClick={() => { scrollRight() }} className="absolute -right-14 cursor-pointer">
                   <BsFillArrowRightSquareFill className="text-4xl font-semibold text-slate-600">
                   </BsFillArrowRightSquareFill>
                 </motion.span>
@@ -213,7 +222,7 @@ function CreateProject() {
 
           {
             isNoLeft != 0 && (
-              <span onClick={() => { scrollLeft(); }} className="absolute -left-14 cursor-pointer z-50">
+              <span onClick={() => { scrollLeft(); }} className="absolute -left-14 cursor-pointer">
                 <BsFillArrowLeftSquareFill className="text-4xl font-semibold text-slate-600"></BsFillArrowLeftSquareFill>
               </span>
             )

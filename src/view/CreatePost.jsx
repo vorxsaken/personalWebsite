@@ -33,6 +33,7 @@ function CreatePost() {
       formData.append('subtitle', subtitle)
       formData.append("text", text);
       formData.append("tags", tags);
+      formData.append('created_at', new Date().toUTCString());
 
       await fetch("http://localhost:3010/admin/upload-post", {
         method: "POST",

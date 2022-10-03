@@ -33,7 +33,7 @@ function Navbar() {
           <NavLink to="posts"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>
             Posts
           </NavLink>
-          <NavLink to="category"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>
+          <NavLink to="projects"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>
             Project
           </NavLink>
           <NavLink to="about"  className={ ({isActive}) => isActive ? 'text-red-600' : 'hover:text-red-400'  }>

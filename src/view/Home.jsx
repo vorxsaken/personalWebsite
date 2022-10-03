@@ -2,40 +2,45 @@ import React from "react";
 import { motion } from "framer-motion";
 import Card from "../components/Card";
 import Buttons from "../components/Buttons";
+import { useSelector } from "react-redux";
 
 function Home() {
-  const num = [1, 2, 3, 4];
-  const cards = num.map((n, index) => (
+  const projectsArray = useSelector(state => state.projects.projects);
+  const posts = useSelector(state => state.posts.posts);
+
+  // posts cards
+  const cards = posts.slice(0, 4).map((post) => (
     <motion.div
-      key={index}
+      key={post._id}
       initial={{ opacity: 0, scale: 0 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
     >
       <Card
-        img={"jasad"}
-        title="ini adalah title yang besar besar besar besar besar"
-        des="An Android app that allows you to scan Japanese words from a picture and search for its 
-        meaning from a dictionary."
+        img={post.imageHeader}
+        title={post.title}
+        des={post.subtitle}
+        tags={post.tags}
+        row={true}
       />
     </motion.div>
   ));
-
-  const projects = num.map((n) => (
+  
+  // project cards
+  const projects = projectsArray.slice(0, 4).map((project) => (
     <motion.div
-      key={n}
+      key={project._id}
       initial={{ opacity: 0, scale: 0 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
     >
       <Card
-        img={"jasad"}
-        row={true}
-        title="ini adalah title yang besar besar besar besar besar"
-        des="An Android app that allows you to scan Japanese words from a picture and search for its 
-        meaning from a dictionary."
+        img={project.imageHeader.pic[0].url}
+        row={false}
+        title={project.title}
+        des={project.deskripsi}
       />
     </motion.div>
   ));
@@ -92,7 +97,7 @@ function Home() {
             className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
-            Recent Projects
+            Recent Posts
           </span>
         </motion.p>
         <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
@@ -117,7 +122,7 @@ function Home() {
             className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
-            Recent Posts
+            Recent Projects
           </span>
         </motion.p>
         <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">

@@ -8,10 +8,12 @@ import store from './app/store';
 import { Provider } from 'react-redux';
 import { authUser } from './slice/userSlice';
 import { getPosts } from './slice/postSlice';
+import { getProjects } from './slice/projectsSlice';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 store.dispatch( authUser() );
 store.dispatch( getPosts() );
+store.dispatch( getProjects() );
 root.render(
     <BrowserRouter>
         <Provider store={store}>

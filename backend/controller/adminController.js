@@ -64,14 +64,14 @@ export async function uploadProject(req, res) {
         }
     }
 
-    await db.collection('projects').insertOne({
+    const projects = await db.collection('projects').insertOne({
         title: title,
         deskripsi: deskripsi,
         github: github,
         imageHeader: imageObject
     })
 
-    res.status(200).send('file uploade successfully');
+    res.status(200).send({message: 'file uploade successfully', _id: projects.insertedId, imageHeader: imageObject });
 }
 
 export async function getPosts(req, res) {
@@ -82,7 +82,7 @@ export async function getPosts(req, res) {
 }
 
 export async function getProjects(req, res) {
-    const database = db.collection('projects').find({});
+    const database = await db.collection('projects').find({});
     const projects = await database.toArray();
 
     res.status(200).send(projects);

@@ -1,16 +1,16 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React from 'react'
 import Card from "../components/Card";
-import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import { useSelector } from 'react-redux';
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 
-function Posts() {
-  const access = useSelector((state) => state.user.adminAccess);
-  const posts = useSelector((state) => state.posts.posts);
+function Projects() {
+  const access = useSelector(state => state.user.adminAccess);
+  const projects = useSelector(state => state.projects.projects);
 
-  var cards = posts.map((post) => {
+  const cards = projects.map((project) => {
     return (
-      <div className="relative" key={post._id}>
+      <div className="relative" key={project._id}>
         {access && (
           <span className="absolute -top-1 -right-1 flex flex-row gap-2">
             <motion.span
@@ -28,15 +28,14 @@ function Posts() {
           </span>
         )}
         <Card
-          row={true}
-          tags={post.tags}
-          img={post.imageHeader}
-          title={post.title}
-          des={post.subtitle}
+          row={false}
+          img={project.imageHeader.pic[0].url}
+          title={project.title}
+          des={project.deskripsi}
         />
       </div>
-    );
-  });
+    )
+  })
 
   return (
     <motion.div
@@ -44,27 +43,20 @@ function Posts() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -100 }}
       transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
-      className="w-full h-auto min-h-screen p-8 flex flex-col items-center gap-8"
+      className="w-full h-auto min-h-screen p-8 flex flex-col items-center gap-14"
     >
       <span className="text-5xl text-slate-600 font-pacifico font-semibold">
-        Posts
+        Project
       </span>
-      <input
-        type="text"
-        className="w-96 p-5 h-6 focus:outline-none
-       border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
-       placeholder:text-slate-600 focus:placeholder:text-slate-400"
-        placeholder="Search ..."
-      />
-      <div className="w-full h-auto flex flex-row flex-wrap justify-center gap-6">
-        {posts.length > 0 ? (
+      <div className="w-full h-auto flex flex-row flex-wrap justify-center items-start gap-6">
+        {projects.length > 0 ? (
           cards
         ) : (
-          <span className="text-xl text-slate-400">Post Kosong</span>
+          <span className="text-xl text-slate-400">Project Kosong</span>
         )}
       </div>
     </motion.div>
-  );
+  )
 }
 
-export default Posts;
+export default Projects
