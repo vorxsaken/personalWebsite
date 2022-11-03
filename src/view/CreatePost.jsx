@@ -79,8 +79,10 @@ function CreatePost() {
         .then(() => {
           dispatch(filterMyStupidPost(id));
           dispatch(getPosts());
-          setIsLoading(false);
-          window.alert("Upload Success");
+          setTimeout(() => {
+            setIsLoading(false);
+            window.alert("Upload Success");
+          }, 1500)
         }).catch((err) => {
           console.log(err);
         })

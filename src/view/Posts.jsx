@@ -27,9 +27,25 @@ function Posts() {
     }
   }
 
+  const viewPost = async (id) => {
+    dispatch(setState(true));
+    try {
+      const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
+      const data = await getPost.json();
+      dispatch(initEditPost({_id: data._id, title: data.title,subtitle: data.subtitle, text: data.text, tags: data.tags,imageHeader: data.imageHeader}));
+      setTimeout(() => {
+        navigate("/post-view")
+        dispatch(setState(false));
+      }, 400)
+    } catch (err) {
+      dispatch(setState(false));
+    }
+  }
+
   var cards = posts.map((post) => {
     return (
-      <div className="relative" key={post._id}>
+      <div className="relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75"
+       key={post._id}>
         {access && (
           <span className="absolute -top-1 -right-1 flex flex-row gap-2">
             <motion.span
@@ -48,6 +64,7 @@ function Posts() {
           </span>
         )}
         <Card
+          onClick={() => { viewPost(post._id) }}
           row={true}
           tags={post.tags}
           img={post.imageHeader}
@@ -71,7 +88,7 @@ function Posts() {
       </span>
       <input
         type="text"
-        className="w-96 p-5 h-6 focus:outline-none
+          className="w-96 p-5 h-6 focus:outline-none
        border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
        placeholder:text-slate-600 focus:placeholder:text-slate-400"
         placeholder="Search ..."

@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaCalendarWeek } from "react-icons/fa";
 
-function Card({ img, title, des, row, tags }) {
+function Card({ img, title, des, row, tags, onClick }) {
     // apakah card berbentuk row ?
     const isRow = row ? { flexDir: 'row', width: '220px' } : { flexDir: 'col', width: '270px' };
     // memotong title jika panjangnya melebihi 50 karakter
@@ -26,7 +26,7 @@ function Card({ img, title, des, row, tags }) {
         }
     }
     return (
-        <div className={`p-2 flex flex-${isRow.flexDir} gap-4 shadow-lg rounded-md py-4`}>
+        <div onClick={ onClick } className={`p-2 flex flex-${isRow.flexDir} gap-4 shadow-lg rounded-md py-4 cursor-pointer`}>
             {/* image */}
             <div className={`w-[${isRow.width}] max-w-full h-[160px] bg-black rounded-md 
         bg-cover bg-center`} style={{ backgroundImage: `url(${img})` }} >

@@ -5,6 +5,7 @@ import { IoIosArrowUp } from 'react-icons/io'
 import Navbar from "./components/Navbar";
 import Home from "./view/Home";
 import Posts from "./view/Posts";
+import PostView from "./view/PostView";
 import Projects from "./view/Projects";
 import About from "./view/About";
 import Footer from "./components/Footer";
@@ -53,6 +54,7 @@ function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />
             <Route path="posts" element={<Posts />} />
+            <Route path="post-view" element={<PostView />} />
             <Route path="projects" element={<Projects />} />
             <Route path="about" element={<About />} />
             <Route path="*" element={<Unknown />} />
