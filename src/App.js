@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { IoIosArrowUp } from 'react-icons/io'
@@ -18,6 +18,7 @@ import { motion } from 'framer-motion';
 function App() {
   const location = useLocation();
   const access = useSelector((state) => state.user.adminAccess);
+  const loader = useSelector((state) => state.loader.isLoading);
   const [isToTop, setIsToTop] = useState(false);
 
   const scrollTotop = () => {
@@ -36,6 +37,16 @@ function App() {
 
   return (
     <div className="overflow-x-hidden flex flex-col">
+      {
+        loader && (
+          <motion.span
+            initial={{ x: -1000 }} animate={{ x: 0 }}
+            transition={{ duration: 0.5, ease: [0, .53, .32, 1] }}
+            className="fixed top-0 w-[100%] h-[4.5px]
+            rounded-md bg-gradient-to-r from-red-500 to-purple-500 z-50 animate-pulse">
+          </motion.span>
+        )
+      }
       <Navbar />
       <main className="mt-16 h-auto select-none flex justify-center items-center">
         <AnimatePresence exitBeforeEnter={true} initial={true}>

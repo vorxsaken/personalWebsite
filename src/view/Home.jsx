@@ -94,7 +94,7 @@ function Home() {
         transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
         className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
-            className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
+            className="before:w-40 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
             Recent Posts
@@ -119,7 +119,7 @@ function Home() {
         transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
         className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
-            className="before:w-32 before:h-[3px] before:-bottom-1 before:absolute 
+            className="before:w-48 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
           >
             Recent Projects

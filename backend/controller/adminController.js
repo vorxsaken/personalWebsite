@@ -1,6 +1,7 @@
 import { mongo } from "../mongodb.js";
 import Jwt from "jsonwebtoken";
 import 'dotenv/config'
+import { ObjectId } from "mongodb";
 
 const db = mongo.db('Personal_Cms');
 
@@ -17,7 +18,7 @@ export async function Login(req, res) {
                     expiresIn: "20h"
                 }
             );
-            await db.collection('admins').updateOne({_id: data[0]._id}, {$set: { token: token}})
+            await db.collection('admins').updateOne({ _id: data[0]._id }, { $set: { token: token } })
             res.send({ userToken: token });
         } else {
             res.status(500).send({ error: "username atau password salah" })
@@ -30,7 +31,7 @@ export async function Login(req, res) {
 export async function uploadPost(req, res) {
     const prefixUrl = req.protocol + '://' + req.get('host');
     const url = prefixUrl + '/upload/images/' + req.file.filename
-    const { title, subtitle, text, tags} = req.body;
+    const { title, subtitle, text, tags } = req.body;
     const post = await db.collection('posts').insertOne({
         title: title,
         subtitle: subtitle,
@@ -39,7 +40,7 @@ export async function uploadPost(req, res) {
         imageHeader: url
     })
 
-    res.status(200).send({message: 'Post Uploades Successfully',id: post.insertedId ,imageUrl: url});
+    res.status(200).send({ message: 'Post Uploades Successfully', id: post.insertedId, imageUrl: url });
 }
 
 export async function uploadProject(req, res) {
@@ -49,10 +50,10 @@ export async function uploadProject(req, res) {
         src: [],
         pic: []
     };
-    for(const key in req.files){
-        for(const file of req.files[key]){
+    for (const key in req.files) {
+        for (const file of req.files[key]) {
             const urlFiles = url + '/upload/images/' + file.filename
-            if(key == 'src'){
+            if (key == 'src') {
                 imageObject.src.push({
                     url: urlFiles
                 })
@@ -71,7 +72,7 @@ export async function uploadProject(req, res) {
         imageHeader: imageObject
     })
 
-    res.status(200).send({message: 'file uploade successfully', _id: projects.insertedId, imageHeader: imageObject });
+    res.status(200).send({ message: 'file uploade successfully', _id: projects.insertedId, imageHeader: imageObject });
 }
 
 export async function getPosts(req, res) {
@@ -81,11 +82,94 @@ export async function getPosts(req, res) {
     res.status(200).send(posts);
 }
 
+export async function getPost(req, res) {
+    const database = db.collection('posts').find(ObjectId(req.params.id));
+    const post = await database.toArray();
+
+    res.status(200).send(post[0]);
+}
+
 export async function getProjects(req, res) {
     const database = await db.collection('projects').find({});
     const projects = await database.toArray();
 
     res.status(200).send(projects);
+}
+
+export async function updatePost(req, res) {
+    if (req.file) {
+        const { id, title, subtitle, text, tags } = req.body;
+        const prefixUrl = req.protocol + '://' + req.get('host');
+        const url = prefixUrl + '/upload/images/' + req.file.filename;
+        const payload = {
+            "title": title,
+            "subtitle": subtitle,
+            "text": text,
+            "tags": tags,
+            "imageHeader": url
+        }
+        try {
+            db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
+                $set: payload
+            })
+            res.status(200).send(payload);
+        } catch (err) {
+            res.status(500);
+        }
+    } else {
+        const { id, title, subtitle, text, tags, file } = req.body;
+        const payload = {
+            "title": title,
+            "subtitle": subtitle,
+            "text": text,
+            "tags": tags,
+            "imageHeader": file
+        }
+        try {
+            db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
+                $set: payload
+            })
+            res.status(200).send(payload);
+        } catch (err) {
+            res.status(500).send('error : ' + err);
+        }
+    }
+    // const { id, title, subtitle, text, tags, file } = req.body;
+    // if (/\blocalhost\b/.test(file)) {
+    //     const payload = {
+    //         "title": title,
+    //         "subtitle": subtitle,
+    //         "text": text,
+    //         "tags": tags,
+    //         "imageHeader": file
+    //     }
+    //     try {
+    //         db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
+    //             $set: payload
+    //         })
+    //         res.status(200).send(payload);
+    //     } catch (err) {
+    //         res.status(500).send('error : ' + err);
+    //     }
+    // } else {
+    //     const prefixUrl = req.protocol + '://' + req.get('host');
+    //     const url = prefixUrl + '/upload/images/' + req.file.filename;
+    //     const payload = {
+    //         "title": title,
+    //         "subtitle": subtitle,
+    //         "text": text,
+    //         "tags": tags,
+    //         "imageHeader": url
+    //     }
+    //     try {
+    //         db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
+    //             $set: payload
+    //         })
+    //         res.status(200).send(payload);
+    //     } catch (err) {
+    //         res.status(500);
+    //     }
+    // }
 }
 
 export async function addPost(req, res) {

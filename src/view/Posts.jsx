@@ -1,12 +1,31 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Card from "../components/Card";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
-
+import { setState } from '../slice/loaderSlice';
+import { initEditPost } from "../slice/postSlice";
+import { useNavigate } from "react-router-dom"
 function Posts() {
   const access = useSelector((state) => state.user.adminAccess);
   const posts = useSelector((state) => state.posts.posts);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const editPost = async (id) => {
+    dispatch(setState(true));
+    try {
+      const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
+      const data = await getPost.json();
+      dispatch(initEditPost({_id: data._id, title: data.title,subtitle: data.subtitle, text: data.text, tags: data.tags,imageHeader: data.imageHeader}));
+      setTimeout(() => {
+        navigate("/create-post")
+        dispatch(setState(false));
+      }, 400)
+    } catch (err) {
+      dispatch(setState(false));
+    }
+  }
 
   var cards = posts.map((post) => {
     return (
@@ -20,6 +39,7 @@ function Posts() {
               <FaTrashAlt className="text-xs  text-white z-50"></FaTrashAlt>
             </motion.span>
             <motion.span
+              onClick={() => { editPost(post._id) }}
               whileHover={{ scale: 1.06 }}
               className="p-3 rounded-full shadow-md flex justify-center items-center bg-slate-600 cursor-pointer"
             >

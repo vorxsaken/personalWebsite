@@ -19,7 +19,7 @@ function Navbar() {
       navigate("../create-project")
     }
     return (
-    <header className="fixed top-0 p-4 w-full flex flex-row gap-4 justify-center border-b-[1px] select-none z-50
+    <header className="fixed top-0 p-4 w-full flex flex-row gap-4 justify-center border-b-[1px] select-none z-40
     border-gray-100 bg-white bg-opacity-[80%] backdrop-blur-md">
       {/* <div className="pl-12 flex items-center">
         <p className="text-2xl text-center font-alfa text-gray-700 cursor-pointer">Vorxsaken</p>

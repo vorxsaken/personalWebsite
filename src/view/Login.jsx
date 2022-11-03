@@ -37,7 +37,7 @@ function Login() {
     }
 
     return (
-    <div className="w-full h-auto min-h-[80vh] flex justify-center items-start mt-16">
+    <div className="w-full h-auto min-h-[80vh] flex justify-center items-center">
       <div className="w-auto h-auto py-8 px-12 flex shadow-xl rounded-lg flex-col items-center gap-8">
         <p className="text-6xl font-pacifico text-slate-600 font-thin mb-8">Login</p>
         <div className="flex flex-col gap-4">

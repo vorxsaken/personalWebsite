@@ -11,39 +11,46 @@ import Dropcursor from "@tiptap/extension-dropcursor";
 import TextAlign from "@tiptap/extension-text-align";
 import MenuBar from "../components/MenuBar";
 import { useDispatch } from "react-redux";
-import { addPost } from "../slice/postSlice";
+import { addPost, cleanInitEditPost, filterMyStupidPost, getPosts } from "../slice/postSlice";
+import { useSelector } from "react-redux";
+import axios from 'axios';
 
 function CreatePost() {
   const file = useRef(0);
+  const [id, setId] = useState('');
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [text, setText] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(0);
   const [blob, setBlob] = useState(null);
   const [tags, setTags] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const editPost = useSelector(state => state.posts.editPost)
   const dispatch = useDispatch();
-  
+  var formData = new FormData();
+
+  const initForm = () => {
+    formData.append("file", image);
+    formData.append("title", title);
+    formData.append('subtitle', subtitle)
+    formData.append("text", text);
+    formData.append("tags", tags);
+    formData.append('created_at', new Date().toUTCString());
+  }
+
   const post = async () => {
     if (title && text && image && tags) {
       setIsLoading(true);
-      const formData = new FormData();
-      formData.append("file", image);
-      formData.append("title", title);
-      formData.append('subtitle', subtitle)
-      formData.append("text", text);
-      formData.append("tags", tags);
-      formData.append('created_at', new Date().toUTCString());
-
+      initForm();
       await fetch("http://localhost:3010/admin/upload-post", {
         method: "POST",
         body: formData,
       })
-      .then(payload => payload.json())
-      .then((data) => {
-        dispatch(addPost({_id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags}))
-      })
-      
+        .then(payload => payload.json())
+        .then((data) => {
+          dispatch(addPost({ _id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags }))
+        })
+
       setTitle("");
       setSubtitle("");
       editor.commands.setContent("");
@@ -57,7 +64,34 @@ function CreatePost() {
     }
   };
 
+  const updatePost = () => {
+    if (title && text && tags) {
+      setIsLoading(true);
+      const form = new FormData();
+      form.append("id", id);
+      form.append("file", image);
+      form.append("title", title);
+      form.append('subtitle', subtitle);
+      form.append("text", text);
+      form.append("tags", tags);
+      form.append('created_at', new Date().toUTCString());
+      axios.post("http://localhost:3010/admin/update-post", form)
+        .then(() => {
+          dispatch(filterMyStupidPost(id));
+          dispatch(getPosts());
+          setIsLoading(false);
+          window.alert("Upload Success");
+        }).catch((err) => {
+          console.log(err);
+        })
+    } else {
+      window.alert('Field Tidak Boleh Kosong');
+    }
+
+  };
+
   const editor = useEditor({
+    content: editPost ? editPost.text : '',
     extensions: [
       StarterKit,
       Image.configure({
@@ -77,13 +111,14 @@ function CreatePost() {
     onUpdate: ({ editor }) => {
       let html = editor.getHTML();
       setText(html);
-    },
+    }
   });
 
   const imageURL = () => {
-    if (image != null) {
+    if (typeof image == "object") {
       let img = URL.createObjectURL(image);
       setBlob(img);
+      return
     }
   };
 
@@ -91,13 +126,28 @@ function CreatePost() {
     imageURL();
   }, [image]);
 
+  useEffect(() => {
+    if (editPost) {
+      setId(editPost._id);
+      setTitle(editPost.title);
+      setSubtitle(editPost.subtitle);
+      setText(editPost.text);
+      setImage(editPost.imageHeader);
+      setBlob(editPost.imageHeader);
+      setTags(editPost.tags);
+      return () => {
+        dispatch(cleanInitEditPost())
+      };
+    }
+  }, [])
+
   return (
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ y: -100, opacity: 0 }}
       transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
-      className="w-full h-auto min-h-screen flex gap-6 flex-col items-center py-10"
+      className="w-full h-auto min-h-screen flex gap-6 flex-col items-center py-10 "
     >
       <span className="text-4xl font-pacifico text-slate-500 mb-12">
         Create A Post
@@ -118,7 +168,7 @@ function CreatePost() {
           onChange={(n) => setSubtitle(n.target.value)}
           value={subtitle}
           type="text"
-          className="lg:min-w-[700px] sm:min-w-[300px] h-auto min-h-[100px] w-auto px-4 py-3 border 
+          className="lg:min-w-[700px] sm:min-w-[300px] min-h-[180px] h-auto w-auto px-4 py-3 border 
             border-slate-400 placeholder:text-start text-start rounded-md focus:outline-none text-sm 
             text-slate-500 font-bold"
           placeholder="Subtitle"
@@ -173,7 +223,13 @@ function CreatePost() {
         />
       </div>
       <div>
-        <Buttons loading={isLoading} onClick={post} text="Post" />
+        {
+          editPost ? (
+            <Buttons loading={isLoading} onClick={updatePost} text="Update" />
+          ) : (
+            <Buttons loading={isLoading} onClick={post} text="Post" />
+          )
+        }
       </div>
     </motion.div>
   );
