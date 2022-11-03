@@ -59,6 +59,9 @@ const postSlice = createSlice({
                         
                     }
                 })
+                state.posts = state.posts.sort((a, b) => {
+                    return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+                });
                 state.status = 'fullfiled';
             })
     }
