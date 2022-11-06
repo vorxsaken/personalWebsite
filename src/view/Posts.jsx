@@ -1,23 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import Card from "../components/Card";
 import { useSelector, useDispatch } from "react-redux";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { setState } from '../slice/loaderSlice';
-import { initEditPost } from "../slice/postSlice";
+import { filterMyStupidPost, initEditPost } from "../slice/postSlice";
 import { useNavigate } from "react-router-dom"
+
 function Posts() {
   const access = useSelector((state) => state.user.adminAccess);
   const posts = useSelector((state) => state.posts.posts);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    return () => {
+      document.documentElement.scrollTop = 0;
+    }
+  }, [])
+
   const editPost = async (id) => {
     dispatch(setState(true));
     try {
       const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({_id: data._id, title: data.title,subtitle: data.subtitle, text: data.text, tags: data.tags,imageHeader: data.imageHeader}));
+      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader }));
       setTimeout(() => {
         navigate("/create-post")
         dispatch(setState(false));
@@ -27,12 +34,25 @@ function Posts() {
     }
   }
 
+  const hapusPost = (id) => {
+    if (window.confirm("Hapus Post Ini ?") === true) {
+      fetch(`http://localhost:3010/admin/delete-post/${id}`)
+        .then(() => {
+          dispatch(filterMyStupidPost(id));
+          window.alert('Berhasil hapus post')
+        })
+        .catch((err) => {
+          window.alert(err)
+        })
+    }
+  }
+
   const viewPost = async (id) => {
     dispatch(setState(true));
     try {
       const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({_id: data._id, title: data.title,subtitle: data.subtitle, text: data.text, tags: data.tags,imageHeader: data.imageHeader}));
+      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader }));
       setTimeout(() => {
         navigate("/post-view")
         dispatch(setState(false));
@@ -45,10 +65,11 @@ function Posts() {
   var cards = posts.map((post) => {
     return (
       <div className="relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75"
-       key={post._id}>
+        key={post._id}>
         {access && (
-          <span className="absolute -top-1 -right-1 flex flex-row gap-2">
+          <span className="absolute -top-1 -left-1 flex flex-row gap-2">
             <motion.span
+              onClick={() => { hapusPost(post._id) }}
               whileHover={{ scale: 1.06 }}
               className="p-3 rounded-full shadow-md flex justify-center items-center bg-slate-600 cursor-pointer"
             >
@@ -88,7 +109,7 @@ function Posts() {
       </span>
       <input
         type="text"
-          className="w-96 p-5 h-6 focus:outline-none
+        className="w-96 p-5 h-6 focus:outline-none
        border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
        placeholder:text-slate-600 focus:placeholder:text-slate-400"
         placeholder="Search ..."

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Card from "../components/Card";
 import { motion } from "framer-motion";
 import { useSelector } from 'react-redux';
@@ -7,6 +7,12 @@ import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 function Projects() {
   const access = useSelector(state => state.user.adminAccess);
   const projects = useSelector(state => state.projects.projects);
+  
+  useEffect(() => {
+    return () => {
+      document.documentElement.scrollTop = 0;
+    }
+  }, [])
 
   const cards = projects.map((project) => {
     return (

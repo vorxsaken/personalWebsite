@@ -134,42 +134,11 @@ export async function updatePost(req, res) {
             res.status(500).send('error : ' + err);
         }
     }
-    // const { id, title, subtitle, text, tags, file } = req.body;
-    // if (/\blocalhost\b/.test(file)) {
-    //     const payload = {
-    //         "title": title,
-    //         "subtitle": subtitle,
-    //         "text": text,
-    //         "tags": tags,
-    //         "imageHeader": file
-    //     }
-    //     try {
-    //         db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
-    //             $set: payload
-    //         })
-    //         res.status(200).send(payload);
-    //     } catch (err) {
-    //         res.status(500).send('error : ' + err);
-    //     }
-    // } else {
-    //     const prefixUrl = req.protocol + '://' + req.get('host');
-    //     const url = prefixUrl + '/upload/images/' + req.file.filename;
-    //     const payload = {
-    //         "title": title,
-    //         "subtitle": subtitle,
-    //         "text": text,
-    //         "tags": tags,
-    //         "imageHeader": url
-    //     }
-    //     try {
-    //         db.collection("posts").updateOne({ "_id": ObjectId(id) }, {
-    //             $set: payload
-    //         })
-    //         res.status(200).send(payload);
-    //     } catch (err) {
-    //         res.status(500);
-    //     }
-    // }
+}
+
+export async function deletePost(req, res) {
+    await db.collection('posts').deleteOne({"_id": ObjectId(req.params.id)})
+    res.status(200)
 }
 
 export async function addPost(req, res) {

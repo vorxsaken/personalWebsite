@@ -78,8 +78,8 @@ function CreatePost() {
       axios.post("http://localhost:3010/admin/update-post", form)
         .then(() => {
           dispatch(filterMyStupidPost(id));
-          dispatch(getPosts());
           setTimeout(() => {
+            dispatch(getPosts());
             setIsLoading(false);
             window.alert("Upload Success");
           }, 1500)

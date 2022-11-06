@@ -49,7 +49,7 @@ function App() {
         )
       }
       <Navbar />
-      <main className="mt-16 h-auto select-none flex justify-center items-center">
+      <main className="mt-16 h-auto select-none flex justify-center items-center scroll-auto">
         <AnimatePresence exitBeforeEnter={true} initial={true}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home />} />

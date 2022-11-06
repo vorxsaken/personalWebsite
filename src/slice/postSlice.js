@@ -44,7 +44,7 @@ const postSlice = createSlice({
             state.editPost = null;
         },
         filterMyStupidPost(state, action){
-            state.posts = state.posts.filter(post => post._id != action.payload );
+            state.posts = state.posts.filter(post => post._id !== action.payload );
         }
     },
     extraReducers(builder) {
@@ -54,9 +54,8 @@ const postSlice = createSlice({
             })
             .addCase(getPosts.fulfilled, (state, action) => {
                 action.payload.forEach((posts) => {
-                    if (!state.posts.some(post => post._id == posts._id)) {
+                    if (!state.posts.some(post => post._id === posts._id)) {
                         state.posts = state.posts.concat(posts);
-                        
                     }
                 })
                 state.posts = state.posts.sort((a, b) => {

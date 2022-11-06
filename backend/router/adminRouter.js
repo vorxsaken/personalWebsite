@@ -7,7 +7,8 @@ import {
   getPosts,
   getPost,
   getProjects,
-  updatePost
+  updatePost,
+  deletePost
 } from "../controller/adminController.js";
 import { verifyToken } from "../middleware/adminMiddleware.js";
 import multer from "multer";
@@ -50,13 +51,20 @@ adminRouter.get("/test", (req, res) => {
   res.send({ data: "hello world" });
 });
 adminRouter.post("/login", Login);
+//post
 adminRouter.get("/addPost", addPost);
 adminRouter.post("/upload-post", upload.single("file"), uploadPost);
 adminRouter.post("/update-post", upload.single("file"), updatePost);
 adminRouter.get("/get-posts", getPosts);
 adminRouter.get("/get-post/:id", getPost);
+adminRouter.get("/delete-post/:id", deletePost)
+//post
+
+//project
 adminRouter.get("/get-projects", getProjects);
 adminRouter.post("/upload-project", upload.fields([{ name: 'src', maxCount: 6 }, { name: 'pic', maxCount: 6 }]), uploadProject);
+//project
+
 adminRouter.post("/auth", verifyToken, (req, res) => {
   res.send({ adminAccess: true, decoded: req.user });
 });

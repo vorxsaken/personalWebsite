@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import Card from "../components/Card";
 import Buttons from "../components/Buttons";
@@ -44,6 +44,12 @@ function Home() {
       />
     </motion.div>
   ));
+
+  useEffect(() => {
+    return () => {
+      document.documentElement.scrollTop = 0;
+    }
+  }, [])
 
   return (
     <motion.div
