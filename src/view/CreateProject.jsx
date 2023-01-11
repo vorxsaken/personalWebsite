@@ -4,14 +4,15 @@ import { FaPlusCircle } from "react-icons/fa";
 import { BsFillArrowLeftSquareFill, BsFillArrowRightSquareFill, BsFilePlusFill, BsFileMinus } from "react-icons/bs";
 import Buttons from "../components/Buttons";
 import Compressor from "compressorjs";
-import { useDispatch } from "react-redux";
-import { addProjects } from "../slice/projectsSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+import { addProjects, cleanEditProject, filterMyProject, getProjects } from "../slice/projectsSlice.js";
 
 
 function CreateProject() {
   var file = useRef(null);
   var project = useRef(null);
   var previewBox = useRef(null);
+  var deskripsiProject = useRef(null);
   const [count, setCount] = useState(1);
   const [image, setImage] = useState([1]);
   const [blob, setBlob] = useState([1]);
@@ -19,12 +20,51 @@ function CreateProject() {
   const [urlImage, setUrlImage] = useState([1]);
   const [title, setTitle] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
+  const [deskripsiHTML, setDeskripsiHTML] = useState('');
   const [github, setGithub] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isMaxRight, setIsMaxRight] = useState(true);
   const [isNoLeft, setIsNoLeft] = useState(0);
+  const [updatedArray, setUpdatedArray] = useState([]);
+  const [updatedPicArray, setUpdatedPicArray] = useState([]);
+  const [urlImageFromDatabase, setUrlImageFromDatabase] = useState(null);
+  const editProject = useSelector(state => state.projects.editProject);
   const dispatch = useDispatch();
   var currentIndex = 0;
+
+  useEffect(() => {
+    if (editProject) {
+      let urlImage = editProject.imageHeader.src.map(img => img.url);
+      let urlPicImage = editProject.imageHeader.pic.map(pics => pics.url);
+      let newImage = Array(urlImage.length).fill(0);
+      setUrlImageFromDatabase(urlImage);
+      setUrlImage(urlImage);
+      setImage(newImage);
+      setPic(urlPicImage);
+      setIsMaxRight(false);
+      setTitle(editProject.title)
+      setDeskripsi(editProject.deskripsi)
+      setGithub(editProject.github)
+    }
+
+    return () => {
+      dispatch(cleanEditProject())
+    }
+
+  }, []);
+
+  const pushNewUpdateToArray = () => {
+    if (editProject && currentIndex < urlImageFromDatabase.length && !/\bblob\b/.test(urlImage[currentIndex])) {
+      let newUpdatedArray = updatedArray;
+      let newUpdatedPicArray = updatedPicArray;
+      newUpdatedArray.push(urlImage[currentIndex])
+      newUpdatedPicArray.push(pic[currentIndex]);
+      setUpdatedArray(newUpdatedArray);
+      setUpdatedPicArray(newUpdatedPicArray);
+      console.log(updatedArray);
+      console.log(newUpdatedPicArray);
+    }
+  }
 
   const input1 = (index) => {
     currentIndex = index;
@@ -43,6 +83,8 @@ function CreateProject() {
   };
 
   const popPreview = () => {
+    if (!updatedArray.some(updated => updated == urlImage[urlImage.length - 1])
+      && image[count - 1] !== 1 && typeof blob[count - 1] != 'object') pushNewUpdateToArray();
     previewBox.current.scrollLeft -= 608;
     image.pop();
     blob.pop();
@@ -52,6 +94,8 @@ function CreateProject() {
   }
 
   const pushImage = e => {
+    //push updated array to new array
+    pushNewUpdateToArray();
     // change specific index image; 
     let newImage = [...image];
     newImage[currentIndex] = 0;
@@ -78,6 +122,36 @@ function CreateProject() {
     })
   };
 
+  const update = async () => {
+    let newBlob = blob.filter((file) => typeof file != 'number');
+    let newPic = pic.filter(pic => !/\bhttp\b/.test(pic));
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("id", editProject._id);
+    formData.append("title", title);
+    formData.append("deskripsi", deskripsi);
+    formData.append("github", github);
+    formData.append('updated_at', new Date().toUTCString());
+    formData.append("updated_src", updatedArray);
+    formData.append("updated_pic", updatedPicArray);
+    for(let i = 0; i < newBlob.length; i++) {
+      formData.append("src", newBlob[i]);
+      formData.append("pic", newPic[i]);
+    }
+
+    await fetch('http://localhost:3010/admin/update-project', {
+      method: "POST",
+      body: formData
+    }).then( () => {
+      dispatch(filterMyProject(editProject._id))
+      dispatch(getProjects())
+      setIsLoading(false)
+      window.alert("Project Updated")
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+
   const post = async () => {
     if (title && deskripsi && github && !blob.some((img) => { return img == 1 })) {
       setIsLoading(true);
@@ -97,10 +171,10 @@ function CreateProject() {
         method: "POST",
         body: formData,
       })
-      .then(data => data.json())
-      .then((json) => {
-        dispatch(addProjects({_id: json._id, title, deskripsi, github, imageHeader: json.imageHeader}))
-      })
+        .then(data => data.json())
+        .then((json) => {
+          dispatch(addProjects({ _id: json._id, title, deskripsi, github, imageHeader: json.imageHeader }))
+        })
 
       setTitle("");
       setDeskripsi("");
@@ -143,6 +217,24 @@ function CreateProject() {
     setIsNoLeft(previewBox.current.scrollLeft);
   }
 
+  const deskripsiDeconstruction = (e) => {
+    if(e.key === "Tab") {
+      e.preventDefault();
+      let deskripsiTextInput = deskripsi.split(" ");
+      let deskripsiForHTML = deskripsi.split(" ");
+      deskripsiForHTML.splice(deskripsiProject.current.selectionStart, 0, '<span className="mr-16"></span>');
+      deskripsiTextInput.splice(deskripsiProject.current.selectionStart, 0, '        ');
+      let joinTextModifiedArray = deskripsiTextInput.join(" ");
+      let JoinHTMLModifiedArray = deskripsiForHTML.join(" ");
+      setDeskripsi(joinTextModifiedArray);
+      setDeskripsiHTML(JoinHTMLModifiedArray);
+    } else if(e.key === "Enter") {
+      let enterDeconstruction = deskripsi.split(" ");
+      enterDeconstruction.splice(deskripsiProject.current.selectionStart, 0, '<br /><br />')
+      setDeskripsiHTML(enterDeconstruction);
+    }
+  }
+
   const preview = image.map((i, index) =>
     <div key={index}>
       {image[index] === 1
@@ -180,7 +272,7 @@ function CreateProject() {
     >
       <div className="flex flex-col justify-center items-center gap-6">
         <span className="text-3xl font-pacifico font-bold text-slate-500">
-          Create Project
+          {editProject ? 'Edit' : 'Create'} Project
         </span>
         <input
           type="file"
@@ -230,7 +322,7 @@ function CreateProject() {
           <div
             ref={previewBox}
             onScroll={() => { scrollPreviewObserver() }}
-            className="w-[600px] h-auto relative flex flex-row gap-2 no-scrollbar overflow-x-auto items-center py-2"
+            className="w-[600px] h-auto relative flex flex-row gap-2 no-scrollbar overflow-x-auto items-center py-2 scroll-smooth"
           >
             {preview}
           </div>
@@ -252,7 +344,9 @@ function CreateProject() {
           <span className="text-xs text-slate-500">Description :</span>
           <textarea
             value={deskripsi}
-            onChange={e => setDeskripsi(e.target.value)}
+            ref={deskripsiProject}
+            onKeyDown={(e) => { deskripsiDeconstruction(e) }}
+            onInput={e => {setDeskripsi(e.target.value) }}
             className="w-full h-36 border-[1px] border-slate-500 rounded-md p-2 focus:outline-none text-slate-500
             text-[0.8rem]"
           />
@@ -267,7 +361,13 @@ function CreateProject() {
             text-[0.8rem]"
           />
         </div>
-        <Buttons loading={isLoading} onClick={post} text="Post" />
+        {
+          editProject ? (
+            <Buttons loading={isLoading} onClick={update} text="Update" />
+          ) : (
+            <Buttons loading={isLoading} onClick={post} text="Post" />
+          )
+        }
       </div>
     </motion.div>
   );

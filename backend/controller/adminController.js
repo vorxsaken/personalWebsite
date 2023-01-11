@@ -96,6 +96,78 @@ export async function getProjects(req, res) {
     res.status(200).send(projects);
 }
 
+export async function getProject(req, res) {
+    const database = db.collection('projects').find(ObjectId(req.params.id));
+    const project = await database.toArray();
+
+    res.status(200).send(project)
+}
+export async function updateProject(req, res) {
+    const { id, title, deskripsi, github, updated_at, updated_src, updated_pic } = req.body;
+    let updated_src_toArray = updated_src.split(',');
+    let updated_pic_toArray = updated_pic.split(',');
+    const prefixUrl = req.protocol + '://' + req.get('host');
+
+    var payload = {
+        "title": title,
+        "deskripsi": deskripsi,
+        "github": github,
+        "updated_at": updated_at,
+    }
+
+    if (!req.files) {
+
+        await db.collection('projects').updateOne({ "_id": ObjectId(id) }, {
+            $set: payload
+        })
+
+    } else {
+        // console.log(updated_src_toArray);
+        // console.log(updated_pic_toArray);
+        for (let i = 0; i < req.files["src"].length; i++) {
+            let urlFiles = prefixUrl + '/upload/images/' + req.files["src"][i].filename;
+            let urlFilesPic = prefixUrl + '/upload/images/' + req.files["pic"][i].filename;
+            // update src image url
+            await db.collection("projects").updateOne(
+                {
+                    "_id": ObjectId(id),
+                    "imageHeader.src.url": updated_src_toArray[i]
+                },
+                {
+                    $set: { "imageHeader.src.$.url": urlFiles }
+                }
+            )
+
+            // update pic image url 
+            await db.collection("projects").updateOne(
+                {
+                    "_id": ObjectId(id),
+                    "imageHeader.pic.url": updated_pic_toArray[i]
+                },
+                {
+                    $set: { "imageHeader.pic.$.url": urlFilesPic }
+                }
+            )
+        }
+
+        // and then update other field except image url
+        await db.collection('projects').updateOne({ "_id": ObjectId(id) }, {
+            $set: payload
+        })
+
+    }
+
+    res.status(200).send(id);
+}
+
+export async function deleteProject(req, res) {
+    const { id } = req.params;
+    
+    await db.collection('projects').deleteOne({ "_id": ObjectId(id) });
+
+    res.status(200).send(id);
+}
+
 export async function updatePost(req, res) {
     if (req.file) {
         const { id, title, subtitle, text, tags } = req.body;
@@ -137,8 +209,8 @@ export async function updatePost(req, res) {
 }
 
 export async function deletePost(req, res) {
-    await db.collection('posts').deleteOne({"_id": ObjectId(req.params.id)})
-    res.status(200)
+    await db.collection('posts').deleteOne({ "_id": ObjectId(req.params.id) })
+    res.status(200).send(req.params.id);
 }
 
 export async function addPost(req, res) {

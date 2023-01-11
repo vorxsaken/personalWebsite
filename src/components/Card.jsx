@@ -32,7 +32,7 @@ function Card({ img, title, des, row, tags, onClick }) {
         bg-cover bg-center`} style={{ backgroundImage: `url(${img})` }} >
             </div>
             {/* content */}
-            <div className='w-full min-h-[120px] max-w-[270px] flex flex-col gap-2 overflow-hidden'>
+            <div className='w-full min-h-[120px] min-w-[270px] max-w-[270px] flex flex-col gap-2 overflow-hidden'>
                 <p className='w-full text-lg text-left break-words font-bold text-slate-800'>{Title()}</p>
                 <span className='flex flex-row gap-2 items-center'>
                     <FaCalendarWeek className='text-xs font-bold text-slate-800' />

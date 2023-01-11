@@ -13,7 +13,6 @@ function Footer() {
              and <span className='text-slate-800 mr-[4px]'>TailwindCss</span> 
              Hosted in <span className='text-slate-800 mr-[4px]'>Github</span></div>
             <div>Copyright 🍣 2022 Vorxsaken</div>
-            <div className='text-xs text-slate-600 absolute -bottom-7'>Design Inspired By: @Elianiva</div>
         </div>
     </div>
   )

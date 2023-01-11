@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState = {
     projects: [],
     status: 'idle',
+    editProject: null,
     error: null
 }
 
@@ -26,7 +27,24 @@ const projectSlice = createSlice({
                 github: github,
                 imageHeader: imageHeader
             })
+        },
+        initEditProject(state, action){
+            const { _id, title, deskripsi, github, imageHeader} = action.payload;
+            state.editProject = {
+                _id: _id,
+                title: title,
+                deskripsi: deskripsi,
+                github: github,
+                imageHeader: imageHeader
+            }
+        },
+        cleanEditProject(state) {
+            state.editProject = null
+        },
+        filterMyProject(state, action) {
+            state.projects = state.projects.filter(project => project._id != action.payload );
         }
+
     },
     extraReducers(builder){
         builder
@@ -34,12 +52,17 @@ const projectSlice = createSlice({
             state.status = 'pending'
         })
         .addCase(getProjects.fulfilled, (state, action) => {
-            state.projects = state.projects.concat(action.payload);
+            action.payload.forEach(payload => {
+                if(!state.projects.some(project => project._id === payload._id )) {
+                    state.projects = state.projects.concat(payload);
+                }
+            })
+
             state.status = 'fulllfilled';
         })
     }
 })
 
 
-export const { addProjects } = projectSlice.actions;
+export const { addProjects, initEditProject, cleanEditProject, filterMyProject } = projectSlice.actions;
 export default projectSlice.reducer; 

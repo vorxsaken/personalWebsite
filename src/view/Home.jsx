@@ -10,39 +10,25 @@ function Home() {
 
   // posts cards
   const cards = posts.slice(0, 4).map((post) => (
-    <motion.div
-      key={post._id}
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
-    >
       <Card
+        key={post._id}
         img={post.imageHeader}
         title={post.title}
         des={post.subtitle}
         tags={post.tags}
         row={true}
       />
-    </motion.div>
   ));
   
   // project cards
   const projects = projectsArray.slice(0, 4).map((project) => (
-    <motion.div
-      key={project._id}
-      initial={{ opacity: 0, scale: 0 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
-    >
       <Card
+        key={project._id}
         img={project.imageHeader.pic[0].url}
         row={false}
         title={project.title}
         des={project.deskripsi}
       />
-    </motion.div>
   ));
 
   useEffect(() => {
@@ -94,10 +80,10 @@ function Home() {
       {/* content posts list summary */}
       <div className="w-full h-auto flex flex-col gap-2 bg-white mt-4">
         <motion.p
-        initial={{ opacity: 0, scale: 0 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: false }}
+        transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
         className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
             className="before:w-40 before:h-[3px] before:-bottom-1 before:absolute 
@@ -106,9 +92,14 @@ function Home() {
             Recent Posts
           </span>
         </motion.p>
-        <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, x: 150 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false }}
+          transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
+          className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {cards}
-        </div>
+        </motion.div>
         <div className="py-4 flex flex-row items-center justify-center">
           <span>
             <Buttons text="More .." />
@@ -119,11 +110,11 @@ function Home() {
       {/* constent project list summary */}
       <div className="w-full h-auto flex flex-col gap-2 bg-white">
         <motion.p 
-        initial={{ opacity: 0, scale: 0 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
-        className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false }}
+          transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
+          className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
             className="before:w-48 before:h-[3px] before:-bottom-1 before:absolute 
           before:rounded-xl before:bg-gradient-to-r before:from-red-400"
@@ -131,9 +122,14 @@ function Home() {
             Recent Projects
           </span>
         </motion.p>
-        <div className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, x: -150 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false }}
+          transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
+          className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {projects}
-        </div>
+        </motion.div>
         <div className="py-4 flex flex-row items-center justify-center">
         <div>
             <Buttons text="More .." />

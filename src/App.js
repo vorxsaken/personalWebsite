@@ -13,6 +13,7 @@ import Login from "./view/Login";
 import Unknown from "./view/Unknown";
 import CreatePost from "./view/CreatePost";
 import CreateProject from "./view/CreateProject";
+import ProjectView from './view/ProjectView';
 import { useSelector } from "react-redux";
 import { motion } from 'framer-motion';
 
@@ -58,6 +59,7 @@ function App() {
             <Route path="projects" element={<Projects />} />
             <Route path="about" element={<About />} />
             <Route path="*" element={<Unknown />} />
+            <Route path="project-view" element={<ProjectView />} />
             {access && (
               <>
                 <Route path="create-post" element={<CreatePost />} />

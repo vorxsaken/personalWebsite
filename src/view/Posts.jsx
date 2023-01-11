@@ -35,16 +35,12 @@ function Posts() {
   }
 
   const hapusPost = (id) => {
-    if (window.confirm("Hapus Post Ini ?") === true) {
-      fetch(`http://localhost:3010/admin/delete-post/${id}`)
-        .then(() => {
-          dispatch(filterMyStupidPost(id));
-          window.alert('Berhasil hapus post')
-        })
-        .catch((err) => {
-          window.alert(err)
-        })
-    }
+    dispatch(setState(true));
+
+    fetch(`http://localhost:3010/admin/delete-post/${id}`).then(() => {
+      dispatch(filterMyStupidPost(id));
+      dispatch(setState(false));
+    })
   }
 
   const viewPost = async (id) => {

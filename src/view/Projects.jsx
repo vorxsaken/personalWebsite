@@ -1,13 +1,63 @@
 import React, { useEffect } from 'react'
 import Card from "../components/Card";
 import { motion } from "framer-motion";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setState } from '../slice/loaderSlice'
+import { initEditProject, filterMyProject } from "../slice/projectsSlice";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"
 
 function Projects() {
   const access = useSelector(state => state.user.adminAccess);
   const projects = useSelector(state => state.projects.projects);
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const editProjects = (id) => {
+    dispatch(setState(true));
+    fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
+      dispatch(initEditProject({
+        _id: data[0]._id,
+        title: data[0].title,
+        github: data[0].github,
+        deskripsi: data[0].deskripsi,
+        imageHeader: data[0].imageHeader
+      }))
+      setTimeout(() => {
+        dispatch(setState(false));
+        navigate('/create-project');
+      }, 400);
+    })
+  }
+
+  const deleteProject = async (id) => {
+    dispatch(setState(true));
+
+    await fetch(`http://localhost:3010/admin/delete-project/${id}`).then(result => result.json()).then(data => {
+      dispatch(initEditProject({
+        _id: data[0]._id,
+        title: data[0].title,
+        github: data[0].github,
+        deskripsi: data[0].deskripsi,
+        imageHeader: data[0].imageHeader
+      }))
+
+      setTimeout(() => {
+        dispatch(setState(false));
+        navigate('/project-view');
+      })
+    })
+  }
+
+  const goToProject = async (id) => {
+    dispatch(setState(true));
+
+    await fetch(`http://localhost:3010/admin/visit-project/${id}`).then(() => {
+      dispatch(setState(false));
+      navigate('/project');
+    })
+  }
+
   useEffect(() => {
     return () => {
       document.documentElement.scrollTop = 0;
@@ -20,12 +70,14 @@ function Projects() {
         {access && (
           <span className="absolute -top-1 -right-1 flex flex-row gap-2">
             <motion.span
+              onClick={() => { deleteProject(project._id) }}
               whileHover={{ scale: 1.06 }}
               className="p-3 rounded-full shadow-md flex justify-center items-center bg-slate-600 cursor-pointer"
             >
               <FaTrashAlt className="text-xs  text-white z-50"></FaTrashAlt>
             </motion.span>
             <motion.span
+              onClick={() => { editProjects(project._id) }}
               whileHover={{ scale: 1.06 }}
               className="p-3 rounded-full shadow-md flex justify-center items-center bg-slate-600 cursor-pointer"
             >
@@ -33,12 +85,14 @@ function Projects() {
             </motion.span>
           </span>
         )}
-        <Card
-          row={false}
-          img={project.imageHeader.pic[0].url}
-          title={project.title}
-          des={project.deskripsi}
-        />
+        <div onClick={() => { goToProject(project._id) }}>
+          <Card
+            row={false}
+            img={project.imageHeader.pic[0].url}
+            title={project.title}
+            des={project.deskripsi}
+          />
+        </div>
       </div>
     )
   })

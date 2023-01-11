@@ -7,8 +7,11 @@ import {
   getPosts,
   getPost,
   getProjects,
+  getProject,
   updatePost,
-  deletePost
+  deletePost,
+  updateProject,
+  deleteProject
 } from "../controller/adminController.js";
 import { verifyToken } from "../middleware/adminMiddleware.js";
 import multer from "multer";
@@ -62,7 +65,10 @@ adminRouter.get("/delete-post/:id", deletePost)
 
 //project
 adminRouter.get("/get-projects", getProjects);
+adminRouter.get("/get-project/:id", getProject);
 adminRouter.post("/upload-project", upload.fields([{ name: 'src', maxCount: 6 }, { name: 'pic', maxCount: 6 }]), uploadProject);
+adminRouter.post("/update-project", upload.fields([{ name: 'src', maxCount: 6 }, { name: 'pic', maxCount: 6 }]), updateProject);
+adminRouter.get("/delete-project/:id", deleteProject);
 //project
 
 adminRouter.post("/auth", verifyToken, (req, res) => {
