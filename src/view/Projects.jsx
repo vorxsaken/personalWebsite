@@ -12,7 +12,8 @@ function Projects() {
   const projects = useSelector(state => state.projects.projects);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const d = useSelector(state => state.projects.editProject)
+  
   const editProjects = (id) => {
     dispatch(setState(true));
     fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
@@ -34,27 +35,28 @@ function Projects() {
     dispatch(setState(true));
 
     await fetch(`http://localhost:3010/admin/delete-project/${id}`).then(result => result.json()).then(data => {
-      dispatch(initEditProject({
-        _id: data[0]._id,
-        title: data[0].title,
-        github: data[0].github,
-        deskripsi: data[0].deskripsi,
-        imageHeader: data[0].imageHeader
-      }))
-
-      setTimeout(() => {
-        dispatch(setState(false));
-        navigate('/project-view');
-      })
+      
     })
   }
 
   const goToProject = async (id) => {
     dispatch(setState(true));
 
-    await fetch(`http://localhost:3010/admin/visit-project/${id}`).then(() => {
+    await fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
+      dispatch(initEditProject({
+        _id: data[0]._id,
+        title: data[0].title,
+        github: data[0].github,
+        techStack: data[0].techStack,
+        deskripsi: data[0].deskripsi,
+        imageHeader: data[0].imageHeader
+      }))
       dispatch(setState(false));
-      navigate('/project');
+      console.log(d);
+      // setTimeout(() => {
+      //   dispatch(setState(false));
+      //   navigate('/project-view');
+      // })
     })
   }
 

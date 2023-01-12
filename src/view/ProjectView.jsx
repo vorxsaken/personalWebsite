@@ -1,8 +1,22 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { FaGithub } from 'react-icons/fa'
+// import { useSelector } from 'react-redux'
+import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, } from "react-icons/io"
+import { useRef } from 'react'
 
 export default function ProjectView() {
+    // const project = useSelector(state => state.projects.editProject)
+    const carausel = useRef(null)
+
+    const scrollLeft = () => {
+        carausel.current.scrollLeft -= 350
+    }
+
+    const scrollRight = () => {
+        carausel.current.scrollLeft += 350
+    }
+
     return (
         <motion.div
             initial={{ y: 100, opacity: 0 }}
@@ -13,20 +27,41 @@ export default function ProjectView() {
         >
             <div className='w-full h-auto flex flex-row items-start justify-center mt-12 gap-8'>
                 <div className='w-auto h-auto flex flex-col justify-center gap-4'>
-                    <div className='w-[600px] h-[350px] flex flex-row rounded-lg overflow-hidden'>
-                        <img src={require('../assets/img/ty.png')} className='h-full w-full' />
+                    <div className='group w-[600px] h-[350px] relative overflow-hidden'>
+                        <IoIosArrowDropleftCircle className='text-4xl text-white absolute cursor-pointer hover:scale-125 
+                            transition-all duration-150 ease-in-out -left-10 top-40 active:scale-110 group-hover:left-7 drop-shadow-2xl
+                            group-hover:opacity-100 opacity-0'
+                            onClick={() => { scrollLeft() }}
+                            />
+                        <div ref={carausel} className='w-full h-full flex flex-row gap-4 overflow-x-auto snap-x snap-mandatory rounded-lg no-scrollbar
+                        scroll-smooth'>
+                            <div className='w-[600px] h-[350px] shrink-0 snap-center snap-always'>
+                                <img src={require('../assets/img/1085642.jpg')} className='h-full w-full' />
+                            </div>
+                            <div className='w-[600px] h-auto shrink-0 snap-center snap-always'>
+                                <img src={require('../assets/img/ty.png')} className='h-full w-full' />
+                            </div>
+                            <div className='w-[600px] h-[350px] shrink-0 snap-center snap-always'>
+                                <img src={require('../assets/img/grid.png')} className='h-full w-full' />
+                            </div>
+                        </div>
+                        <IoIosArrowDroprightCircle className='text-4xl text-white absolute cursor-pointer hover:scale-125 
+                            transition-all duration-150 ease-in-out active:scale-110 -right-10 top-40 group-hover:right-7 drop-shadow-2xl
+                            group-hover:opacity-100 opacity-0 '
+                            onClick={() => { scrollRight() }}
+                            />
                     </div>
                     <div className='flex flex-col justify-center gap-2'>
                         <span className='font-bold text-sm text-center'>Tech Stack :</span>
                         <div className='flex flex-row gap-2 justify-center'>
                             <div className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                Firebase
+                                MongoDB
                             </div>
                             <div className='w-auto py-2 px-4 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                Vue.js
+                                ReactJS
                             </div>
                             <div className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                Vuetify
+                                TailwindCSS
                             </div>
                         </div>
                     </div>

@@ -19,22 +19,24 @@ const projectSlice = createSlice({
     initialState,
     reducers: {
         addProjects(state, action){
-            const { _id, title, deskripsi, github, imageHeader } = action.payload;
+            const { _id, title, deskripsi, github, techStack, imageHeader } = action.payload;
             state.projects.push({
                 _id: _id,
                 title: title,
                 deskripsi: deskripsi,
                 github: github,
+                techStack: techStack,
                 imageHeader: imageHeader
             })
         },
         initEditProject(state, action){
-            const { _id, title, deskripsi, github, imageHeader} = action.payload;
+            const { _id, title, deskripsi, github, techStack, imageHeader} = action.payload;
             state.editProject = {
                 _id: _id,
                 title: title,
                 deskripsi: deskripsi,
                 github: github,
+                techStack: techStack,
                 imageHeader: imageHeader
             }
         },

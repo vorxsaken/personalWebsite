@@ -28,6 +28,7 @@ function CreateProject() {
   const [updatedArray, setUpdatedArray] = useState([]);
   const [updatedPicArray, setUpdatedPicArray] = useState([]);
   const [urlImageFromDatabase, setUrlImageFromDatabase] = useState(null);
+  const [techStack, setTechStack] = useState('');
   const editProject = useSelector(state => state.projects.editProject);
   const dispatch = useDispatch();
   var currentIndex = 0;
@@ -131,6 +132,7 @@ function CreateProject() {
     formData.append("title", title);
     formData.append("deskripsi", deskripsi);
     formData.append("github", github);
+    formData.append("techStack", techStack);
     formData.append('updated_at', new Date().toUTCString());
     formData.append("updated_src", updatedArray);
     formData.append("updated_pic", updatedPicArray);
@@ -160,6 +162,7 @@ function CreateProject() {
       formData.append("title", title);
       formData.append("deskripsi", deskripsi);
       formData.append("github", github);
+      formData.append("techStack", techStack);
       formData.append('created_at', new Date().toUTCString());
       for (let i = 0; i < blob.length; i++) {
         formData.append("src", blob[i]);
@@ -228,12 +231,18 @@ function CreateProject() {
       let JoinHTMLModifiedArray = deskripsiForHTML.join(" ");
       setDeskripsi(joinTextModifiedArray);
       setDeskripsiHTML(JoinHTMLModifiedArray);
+      console.log(deskripsiHTML);
     } else if(e.key === "Enter") {
       let enterDeconstruction = deskripsi.split(" ");
-      enterDeconstruction.splice(deskripsiProject.current.selectionStart, 0, '<br /><br />')
-      setDeskripsiHTML(enterDeconstruction);
+      enterDeconstruction.splice(deskripsiProject.current.selectionStart, 0, "<br><br>");
+      let stringBasesHtml = enterDeconstruction.join(" ");
+      setDeskripsiHTML(stringBasesHtml);
     }
   }
+
+  useEffect(() => {
+    console.log(deskripsiHTML);
+  }, [deskripsiHTML])
 
   const preview = image.map((i, index) =>
     <div key={index}>
@@ -338,6 +347,7 @@ function CreateProject() {
             onChange={e => setTitle(e.target.value)}
             className="w-full h-10 border-[1px] border-slate-500 rounded-md p-4 focus:outline-none text-slate-500
             text-sm"
+            placeholder="your shitty project name ..."
           />
         </div>
         <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
@@ -349,6 +359,7 @@ function CreateProject() {
             onInput={e => {setDeskripsi(e.target.value) }}
             className="w-full h-36 border-[1px] border-slate-500 rounded-md p-2 focus:outline-none text-slate-500
             text-[0.8rem]"
+            placeholder="lorem ipsum or whatever ..."
           />
         </div>
         <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
@@ -359,7 +370,18 @@ function CreateProject() {
             type="text"
             className="w-full h-10 border-[1px] border-slate-500 rounded-md p-4 focus:outline-none text-slate-500
             text-[0.8rem]"
+            placeholder="https:// ...."
           />
+        </div>
+        <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
+          <span className=" text-xs text-slate-500">Tech Stack :</span>
+          <input 
+            type="text"
+            onChange={e => setTechStack(e.target.value)}
+            value={techStack}
+            className="w-full h-10 border-[1px] border-slate-500 rounded-md p-4 focus:outline-none text-slate-500 text-[0.8rem]"
+            placeholder="Start with #"
+            />
         </div>
         {
           editProject ? (
