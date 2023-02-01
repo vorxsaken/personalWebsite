@@ -6,12 +6,15 @@ import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { setState } from '../slice/loaderSlice';
 import { filterMyStupidPost, initEditPost } from "../slice/postSlice";
 import { useNavigate } from "react-router-dom"
+import { useRef } from "react";
 
 function Posts() {
   const access = useSelector((state) => state.user.adminAccess);
   const posts = useSelector((state) => state.posts.posts);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const sortedPost = [...posts].sort((a, b) => a.created_at - b.created_at);
+  const postRef = useRef('');
 
   useEffect(() => {
     return () => {
@@ -19,12 +22,29 @@ function Posts() {
     }
   }, [])
 
+  const filterPostList = (text) => {
+    let postList = document.getElementsByClassName('post');
+    for(const post of postList) {
+      let textInside = post.childNodes[1].childNodes[1].childNodes[0].innerText;
+      for(let i = 0; i < text.length; i++) {
+        if(text[i].toLowerCase() !== textInside[i].toLowerCase()) {
+          post.setAttribute('class', 'hidden post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75');
+        } else if(text[i].toLowerCase() === textInside[i].toLowerCase()){
+          post.setAttribute('class', 'post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75')
+        }
+      }
+      if(text === '') {
+        post.setAttribute('class', 'post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75');
+      }
+    }    
+  }
+
   const editPost = async (id) => {
     dispatch(setState(true));
     try {
       const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader }));
+      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader, created_at: data.created_at }));
       setTimeout(() => {
         navigate("/create-post")
         dispatch(setState(false));
@@ -48,7 +68,7 @@ function Posts() {
     try {
       const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader }));
+      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader, created_at: data.created_at }));
       setTimeout(() => {
         navigate("/post-view")
         dispatch(setState(false));
@@ -58,9 +78,9 @@ function Posts() {
     }
   }
 
-  var cards = posts.map((post) => {
+  var cards = sortedPost.map((post) => {
     return (
-      <div className="relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75"
+      <div className="post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75"
         key={post._id}>
         {access && (
           <span className="absolute -top-1 -left-1 flex flex-row gap-2">
@@ -87,6 +107,7 @@ function Posts() {
           img={post.imageHeader}
           title={post.title}
           des={post.subtitle}
+          date={post.created_at}
         />
       </div>
     );
@@ -104,13 +125,14 @@ function Posts() {
         Posts
       </span>
       <input
+        onChange={(e) => filterPostList(e.target.value) }
         type="text"
         className="w-96 p-5 h-6 focus:outline-none
        border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
        placeholder:text-slate-600 focus:placeholder:text-slate-400"
         placeholder="Search ..."
       />
-      <div className="w-full h-auto flex flex-row flex-wrap justify-center gap-6">
+      <div ref={ postRef } className="postList w-full h-auto flex flex-row flex-wrap justify-center gap-6">
         {posts.length > 0 ? (
           cards
         ) : (
