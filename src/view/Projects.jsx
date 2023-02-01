@@ -12,7 +12,6 @@ function Projects() {
   const projects = useSelector(state => state.projects.projects);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const d = useSelector(state => state.projects.editProject)
   
   const editProjects = (id) => {
     dispatch(setState(true));
