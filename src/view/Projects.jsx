@@ -35,7 +35,8 @@ function Projects() {
     dispatch(setState(true));
 
     await fetch(`http://localhost:3010/admin/delete-project/${id}`).then(result => result.json()).then(data => {
-      
+      dispatch(filterMyProject(id));
+      dispatch(setState(false));
     })
   }
 
@@ -52,11 +53,10 @@ function Projects() {
         imageHeader: data[0].imageHeader
       }))
       dispatch(setState(false));
-      console.log(d);
-      // setTimeout(() => {
-      //   dispatch(setState(false));
-      //   navigate('/project-view');
-      // })
+      setTimeout(() => {
+        dispatch(setState(false));
+        navigate('/project-view');
+      })
     })
   }
 
@@ -68,7 +68,7 @@ function Projects() {
 
   const cards = projects.map((project) => {
     return (
-      <div className="relative" key={project._id}>
+      <div className="relative transition-all duration-100 hover:shadow-xl hover:scale-[1.02]" key={project._id}>
         {access && (
           <span className="absolute -top-1 -right-1 flex flex-row gap-2">
             <motion.span
