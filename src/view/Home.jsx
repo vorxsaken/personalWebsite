@@ -7,9 +7,11 @@ import { useSelector } from "react-redux";
 function Home() {
   const projectsArray = useSelector(state => state.projects.projects);
   const posts = useSelector(state => state.posts.posts);
-
+  const postList = [...posts];
+  var sortedPost = postList.sort((a, b) => { return a.created_at - b.created_at });
+  
   // posts cards
-  const cards = posts.slice(0, 4).map((post) => (
+  const cards = sortedPost.slice(0, 4).map((post) => (
       <Card
         key={post._id}
         img={post.imageHeader}
@@ -17,6 +19,7 @@ function Home() {
         des={post.subtitle}
         tags={post.tags}
         row={true}
+        date={post.created_at}
       />
   ));
   
@@ -82,7 +85,7 @@ function Home() {
         <motion.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: false }}
+        viewport={{ once: true }}
         transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
         className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
@@ -95,7 +98,7 @@ function Home() {
         <motion.div
           initial={{ opacity: 0, x: 150 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
           className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {cards}
@@ -112,7 +115,7 @@ function Home() {
         <motion.p 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
           className="text-center font-bold text-2xl text-slate-600 mt-10 relative">
           <span
@@ -125,7 +128,7 @@ function Home() {
         <motion.div
           initial={{ opacity: 0, x: -150 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
           className="px-4 py-4 flex flex-row flex-wrap gap-6 items-center justify-center">
           {projects}
