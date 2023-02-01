@@ -1,7 +1,8 @@
 import React from 'react'
 import { FaCalendarWeek } from "react-icons/fa";
+import { getDate, hashtag } from '../utils';
 
-function Card({ img, title, des, row, tags, onClick }) {
+function Card({ img, title, des, row, tags, onClick, date }) {
     // apakah card berbentuk row ?
     const isRow = row ? { flexDir: 'row', width: '220px' } : { flexDir: 'col', width: '270px' };
     // memotong title jika panjangnya melebihi 50 karakter
@@ -12,19 +13,7 @@ function Card({ img, title, des, row, tags, onClick }) {
     const Desc = () => {
         return des.length > 130 ? des.substr(0, 130) + ' ...' : des;
     }
-    const hashtag = () => {
-        if (tags) {
-            var tag = tags.split('#').filter(p => p != '' && p != ' ');
-            if (tag.length > 2) {
-                tag = tag.slice(0, 2)
-            }
-            let hashTag = tag.map((t, index) => (
-                <span key={index} className='rounded-md px-2 bg-gray-200 text-slate-800 text-xs'>#{t}</span>
-            ))
 
-            return hashTag;
-        }
-    }
     return (
         <div onClick={ onClick } className={`p-2 flex flex-${isRow.flexDir} gap-4 shadow-lg rounded-md py-4 cursor-pointer`}>
             {/* image */}
@@ -34,10 +23,10 @@ function Card({ img, title, des, row, tags, onClick }) {
             {/* content */}
             <div className='w-full min-h-[120px] min-w-[270px] max-w-[270px] flex flex-col gap-2 overflow-hidden'>
                 <p className='w-full text-lg text-left break-words font-bold text-slate-800'>{Title()}</p>
-                <span className='flex flex-row gap-2 items-center'>
+                <span className='flex flex-row gap-1 items-center'>
                     <FaCalendarWeek className='text-xs font-bold text-slate-800' />
-                    <p className='text-xs font-normal'>10/10/2022</p>
-                    {hashtag()}
+                    <p className='text-[11px] font-normal'>{ getDate(date) }</p>
+                    { hashtag(tags) }
                 </span>
                 <span className='w-full text-xs text-left break-words font-light text-gray-500'>{Desc()}</span>
             </div>
