@@ -35,7 +35,7 @@ function CreatePost() {
     formData.append('subtitle', subtitle)
     formData.append("text", text);
     formData.append("tags", tags);
-    formData.append('created_at', new Date().toUTCString());
+    formData.append("created_at", Date.now());
   }
 
   const post = async () => {
@@ -48,7 +48,7 @@ function CreatePost() {
       })
         .then(payload => payload.json())
         .then((data) => {
-          dispatch(addPost({ _id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags }))
+          dispatch(addPost({ _id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags, created_at: data.created_at }))
         })
 
       setTitle("");
@@ -74,7 +74,7 @@ function CreatePost() {
       form.append('subtitle', subtitle);
       form.append("text", text);
       form.append("tags", tags);
-      form.append('created_at', new Date().toUTCString());
+      form.append('created_at', Date.now());
       axios.post("http://localhost:3010/admin/update-post", form)
         .then(() => {
           dispatch(filterMyStupidPost(id));
@@ -117,7 +117,7 @@ function CreatePost() {
   });
 
   const imageURL = () => {
-    if (typeof image == "object") {
+    if (typeof image == "object" && image != null) {
       let img = URL.createObjectURL(image);
       setBlob(img);
       return
