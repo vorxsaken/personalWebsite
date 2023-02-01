@@ -133,7 +133,7 @@ function CreateProject() {
     formData.append("deskripsi", deskripsi);
     formData.append("github", github);
     formData.append("techStack", techStack);
-    formData.append('updated_at', new Date().toUTCString());
+    formData.append('updated_at', Date.now());
     formData.append("updated_src", updatedArray);
     formData.append("updated_pic", updatedPicArray);
     for(let i = 0; i < newBlob.length; i++) {
@@ -163,7 +163,7 @@ function CreateProject() {
       formData.append("deskripsi", deskripsi);
       formData.append("github", github);
       formData.append("techStack", techStack);
-      formData.append('created_at', new Date().toUTCString());
+      formData.append("created_at", Date.now());
       for (let i = 0; i < blob.length; i++) {
         formData.append("src", blob[i]);
         formData.append('pic', pic[i]);
