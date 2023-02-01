@@ -17,6 +17,11 @@ export default function ProjectView() {
         carausel.current.scrollLeft += 350
     }
 
+    const projectTechStack = () => {
+        let getTechStackArray = project.techStack.split("#").filter(tech => tech !== '' && tech !== ' ');
+        return getTechStackArray;
+    }
+
     return (
         <motion.div
             initial={{ y: 100, opacity: 0 }}
@@ -52,15 +57,13 @@ export default function ProjectView() {
                     <div className='flex flex-col justify-center gap-2'>
                         <span className='font-bold text-sm text-center'>Tech Stack :</span>
                         <div className='flex flex-row gap-2 justify-center'>
-                            <div className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                MongoDB
-                            </div>
-                            <div className='w-auto py-2 px-4 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                ReactJS
-                            </div>
-                            <div className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                TailwindCSS
-                            </div>
+                            {
+                                projectTechStack().map((techStack, index) => (
+                                    <div key={index} className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
+                                        { techStack }
+                                    </div>
+                                ))
+                            }
                         </div>
                     </div>
                     <div className='w-full h-10 mt-4 flex justify-center items-center'>
