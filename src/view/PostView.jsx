@@ -4,24 +4,11 @@ import { useEffect } from "react"
 import { cleanInitEditPost } from "../slice/postSlice"
 import HTMLReactParser from 'html-react-parser'
 import { motion } from "framer-motion"
+import { getDate, hashtag } from '../utils'
 
 function PostView() {
     const viewPost = useSelector((state) => state.posts.editPost);
     const dispatch = useDispatch()
-
-    const hashtag = () => {
-        if (viewPost.tags) {
-            var tag = viewPost.tags.split('#').filter(p => p != '' && p != ' ');
-            if (tag.length > 2) {
-                tag = tag.slice(0, 2)
-            }
-            let hashTag = tag.map((t, index) => (
-                <span key={index} className='rounded-md px-2 bg-gray-200 text-slate-800 text-xs '>#{t}</span>
-            ))
-
-            return hashTag;
-        }
-    }
 
     const scrollIntoView = (content) => {
         const element = document.getElementById(content);
@@ -69,10 +56,10 @@ function PostView() {
                     {viewPost.title}
                 </span>
                 <span className='text-xs font-normal text-gray-600'>
-                    Posted At 10/10/2022
+                    Posted At { getDate(viewPost.created_at) }
                 </span>
                 <span className='flex flex-row gap-2'>
-                    {hashtag()}
+                    {hashtag(viewPost.tags)}
                 </span>
             </div>
             <span className='w-full flex flex-col item-start'>
