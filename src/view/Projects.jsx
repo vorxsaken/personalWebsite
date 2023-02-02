@@ -21,7 +21,8 @@ function Projects() {
         title: data[0].title,
         github: data[0].github,
         deskripsi: data[0].deskripsi,
-        imageHeader: data[0].imageHeader
+        imageHeader: data[0].imageHeader,
+        techStack: data[0].techStack
       }))
       setTimeout(() => {
         dispatch(setState(false));
@@ -49,7 +50,7 @@ function Projects() {
         github: data[0].github,
         techStack: data[0].techStack,
         deskripsi: data[0].deskripsi,
-        imageHeader: data[0].imageHeader
+        imageHeader: data[0].imageHeader,
       }))
       dispatch(setState(false));
       setTimeout(() => {
@@ -92,6 +93,7 @@ function Projects() {
             img={project.imageHeader.pic[0].url}
             title={project.title}
             des={project.deskripsi}
+            date={project.created_at}
           />
         </div>
       </div>

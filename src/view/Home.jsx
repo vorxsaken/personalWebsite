@@ -69,6 +69,7 @@ function Home() {
       row={false}
       title={project.title}
       des={project.deskripsi}
+      date={project.created_at}
     />
   ));
 
