@@ -1,13 +1,14 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { FaGithub } from 'react-icons/fa'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, } from "react-icons/io"
-import { useRef } from 'react'
-
+import { useRef, useEffect } from 'react'
+import { cleanEditProject } from "../slice/projectsSlice"
 export default function ProjectView() {
     const project = useSelector(state => state.projects.editProject)
     const carausel = useRef(null)
+    const dispatch = useDispatch();
 
     const scrollLeft = () => {
         carausel.current.scrollLeft -= 350
@@ -22,6 +23,12 @@ export default function ProjectView() {
         return getTechStackArray;
     }
 
+    useEffect(() => {
+        return () => {
+            dispatch(cleanEditProject())
+        }
+    }, [])
+    
     return (
         <motion.div
             initial={{ y: 100, opacity: 0 }}
@@ -60,7 +67,7 @@ export default function ProjectView() {
                             {
                                 projectTechStack().map((techStack, index) => (
                                     <div key={index} className='w-auto p-2 h-auto rounded-md bg-slate-700 text-white font-bold'>
-                                        { techStack }
+                                        {techStack}
                                     </div>
                                 ))
                             }
