@@ -25,12 +25,12 @@ function Posts() {
   const filterPostList = (text) => {
     let postList = document.getElementsByClassName('post');
     for(const post of postList) {
-      let textInside = post.childNodes[1].childNodes[1].childNodes[0].innerText;
+      let textInside = post.childNodes[access ? 1 : 0].childNodes[1].childNodes[0].innerText;
       for(let i = 0; i < text.length; i++) {
         if(text[i].toLowerCase() !== textInside[i].toLowerCase()) {
-          post.setAttribute('class', 'hidden post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75');
+          post.classList.add('hidden')
         } else if(text[i].toLowerCase() === textInside[i].toLowerCase()){
-          post.setAttribute('class', 'post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75')
+          post.removeAttribute('hidden')
         }
       }
       if(text === '') {
