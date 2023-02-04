@@ -30,14 +30,15 @@ const postSlice = createSlice({
             })
         },
         initEditPost(state, action) {
-            const { _id, title, subtitle, text, tags, imageHeader } = action.payload;
+            const { _id, title, subtitle, text, tags, imageHeader, created_at } = action.payload;
             state.editPost = {
                 _id: _id,
                 title: title,
                 subtitle: subtitle,
                 text: text,
                 tags: tags,
-                imageHeader: imageHeader
+                imageHeader: imageHeader,
+                created_at: created_at
             }
         },
         cleanInitEditPost(state) {
