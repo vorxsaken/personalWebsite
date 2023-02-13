@@ -1,14 +1,15 @@
 import React from 'react'
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useEffect } from "react"
-import { cleanInitEditPost } from "../slice/postSlice"
-import HTMLReactParser from 'html-react-parser'
+import parse from 'html-react-parser'
 import { motion } from "framer-motion"
-import { getDate, hashtag } from '../utils'
+import { getDate, hashtag, useCustomeTitle } from '../utils'
+import { useMediaQuery } from "../utils"
 
 function PostView() {
-    const viewPost = useSelector((state) => state.posts.editPost);
-    const dispatch = useDispatch()
+    const viewPost = useSelector((state) => state.posts.viewPost);
+    const isSmall = useMediaQuery('(max-width: 428px)');
+    useCustomeTitle(viewPost.title);
 
     const scrollIntoView = (content) => {
         const element = document.getElementById(content);
@@ -38,9 +39,6 @@ function PostView() {
 
     useEffect(() => {
         textWithId();
-        return () => {
-            dispatch(cleanInitEditPost())
-        }
     }, [])
 
     return (
@@ -49,10 +47,10 @@ function PostView() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
-            className="w-[700px] h-auto min-h-screen p-8 flex flex-col items-center gap-8 scroll-auto"
+            className="w-[800px] h-auto min-h-screen p-8 flex flex-col items-center gap-8 scroll-auto"
         >
             <div id='name' className='w-full h-auto p-0 flex flex-col gap-1'>
-                <span className='text-3xl font-bold text-slate-800'>
+                <span className='lg:text-3xl sm:text-xl font-bold text-slate-800'>
                     {viewPost.title}
                 </span>
                 <span className='text-xs font-normal text-gray-600'>
@@ -83,8 +81,8 @@ function PostView() {
                     </ul>
                 </span>
             )}
-            <div className='text-justify'>
-                {HTMLReactParser(viewPost.text)}
+            <div className={`text-start ${ isSmall ? 'text-xs' : 'text-base'}`}>
+                {parse(viewPost.text)}
             </div>
         </motion.div>
     )

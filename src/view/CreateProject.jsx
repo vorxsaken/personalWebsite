@@ -6,13 +6,20 @@ import Buttons from "../components/Buttons";
 import Compressor from "compressorjs";
 import { useDispatch, useSelector } from "react-redux";
 import { addProjects, cleanEditProject, filterMyProject, getProjects } from "../slice/projectsSlice.js";
+import MenuBar from "../components/MenuBar";
+import { EditorContent, useEditor } from "@tiptap/react";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { lowlight } from "lowlight";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import TextAlign from "@tiptap/extension-text-align";
 
 
 function CreateProject() {
   var file = useRef(null);
   var project = useRef(null);
   var previewBox = useRef(null);
-  var deskripsiProject = useRef(null);
   const [count, setCount] = useState(1);
   const [image, setImage] = useState([1]);
   const [blob, setBlob] = useState([1]);
@@ -20,7 +27,6 @@ function CreateProject() {
   const [urlImage, setUrlImage] = useState([1]);
   const [title, setTitle] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
-  const [deskripsiHTML, setDeskripsiHTML] = useState('');
   const [github, setGithub] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isMaxRight, setIsMaxRight] = useState(true);
@@ -46,12 +52,14 @@ function CreateProject() {
       setTitle(editProject.title)
       setDeskripsi(editProject.deskripsi)
       setGithub(editProject.github)
+      setTechStack(editProject.techStack)
     }
 
     return () => {
       dispatch(cleanEditProject())
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pushNewUpdateToArray = () => {
@@ -62,8 +70,6 @@ function CreateProject() {
       newUpdatedPicArray.push(pic[currentIndex]);
       setUpdatedArray(newUpdatedArray);
       setUpdatedPicArray(newUpdatedPicArray);
-      console.log(updatedArray);
-      console.log(newUpdatedPicArray);
     }
   }
 
@@ -84,7 +90,7 @@ function CreateProject() {
   };
 
   const popPreview = () => {
-    if (!updatedArray.some(updated => updated == urlImage[urlImage.length - 1])
+    if (!updatedArray.some(updated => updated === urlImage[urlImage.length - 1])
       && image[count - 1] !== 1 && typeof blob[count - 1] != 'object') pushNewUpdateToArray();
     previewBox.current.scrollLeft -= 608;
     image.pop();
@@ -102,9 +108,16 @@ function CreateProject() {
     newImage[currentIndex] = 0;
     setImage(newImage);
     // change blob in specific index array 
-    let newBlob = [...blob]
-    newBlob[currentIndex] = e.target.files[0];
-    setBlob(newBlob)
+    let newBlob = [...blob];
+    new Compressor(e.target.files[0], {
+      quality: 0.5,
+      width: 700,
+      mimeType: "image/webp",
+      success(res) {
+        newBlob[currentIndex] = res;
+        setBlob(newBlob);
+      }
+    })
     // change urlImage in specific index array
     let imageUrl = URL.createObjectURL(e.target.files[0]);
     let newImageUrl = [...urlImage];
@@ -136,15 +149,18 @@ function CreateProject() {
     formData.append('updated_at', Date.now());
     formData.append("updated_src", updatedArray);
     formData.append("updated_pic", updatedPicArray);
-    for(let i = 0; i < newBlob.length; i++) {
+    for (let i = 0; i < newBlob.length; i++) {
       formData.append("src", newBlob[i]);
       formData.append("pic", newPic[i]);
     }
 
     await fetch('http://localhost:3010/admin/update-project', {
       method: "POST",
+      headers: {
+        "x-access-token": localStorage.getItem("_xvd")
+      },
       body: formData
-    }).then( () => {
+    }).then(() => {
       dispatch(filterMyProject(editProject._id))
       dispatch(getProjects())
       setIsLoading(false)
@@ -155,7 +171,7 @@ function CreateProject() {
   }
 
   const post = async () => {
-    if (title && deskripsi && github && !blob.some((img) => { return img == 1 })) {
+    if (title && deskripsi && github && !blob.some((img) => { return img === 1 })) {
       setIsLoading(true);
 
       const formData = new FormData();
@@ -169,14 +185,16 @@ function CreateProject() {
         formData.append('pic', pic[i]);
       }
 
-
       await fetch("http://localhost:3010/admin/upload-project", {
         method: "POST",
+        headers: {
+          "x-access-token": localStorage.getItem("_xvd")
+        },
         body: formData,
       })
         .then(data => data.json())
         .then((json) => {
-          dispatch(addProjects({ _id: json._id, title, deskripsi, github, imageHeader: json.imageHeader }))
+          dispatch(addProjects({ _id: json._id, title, deskripsi, github, imageHeader: json.imageHeader, created_at: json.created_at, techStack }))
         })
 
       setTitle("");
@@ -194,6 +212,30 @@ function CreateProject() {
       window.alert("Field Tidak Boleh Kosong");
     }
   };
+
+  const editor = useEditor({
+    content: editProject ? editProject.deskripsi : '',
+    extensions: [
+      StarterKit,
+      Image.configure({
+        inline: true,
+        HTMLAttributes: {
+          style: "margin: auto",
+        },
+      }),
+      Dropcursor,
+      CodeBlockLowlight.configure({
+        lowlight,
+      }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+    ],
+    onUpdate: ({ editor }) => {
+      let html = editor.getHTML();
+      setDeskripsi(html);
+    }
+  });
 
   const scrollLeft = () => {
     previewBox.current.scrollLeft -= 608;
@@ -219,30 +261,6 @@ function CreateProject() {
 
     setIsNoLeft(previewBox.current.scrollLeft);
   }
-
-  const deskripsiDeconstruction = (e) => {
-    if(e.key === "Tab") {
-      e.preventDefault();
-      let deskripsiTextInput = deskripsi.split(" ");
-      let deskripsiForHTML = deskripsi.split(" ");
-      deskripsiForHTML.splice(deskripsiProject.current.selectionStart, 0, '<span className="mr-16"></span>');
-      deskripsiTextInput.splice(deskripsiProject.current.selectionStart, 0, '        ');
-      let joinTextModifiedArray = deskripsiTextInput.join(" ");
-      let JoinHTMLModifiedArray = deskripsiForHTML.join(" ");
-      setDeskripsi(joinTextModifiedArray);
-      setDeskripsiHTML(JoinHTMLModifiedArray);
-      console.log(deskripsiHTML);
-    } else if(e.key === "Enter") {
-      let enterDeconstruction = deskripsi.split(" ");
-      enterDeconstruction.splice(deskripsiProject.current.selectionStart, 0, "<br><br>");
-      let stringBasesHtml = enterDeconstruction.join(" ");
-      setDeskripsiHTML(stringBasesHtml);
-    }
-  }
-
-  useEffect(() => {
-    console.log(deskripsiHTML);
-  }, [deskripsiHTML])
 
   const preview = image.map((i, index) =>
     <div key={index}>
@@ -322,7 +340,7 @@ function CreateProject() {
           }
 
           {
-            isNoLeft != 0 && (
+            isNoLeft !== 0 && (
               <span onClick={() => { scrollLeft(); }} className="absolute -left-14 cursor-pointer">
                 <BsFillArrowLeftSquareFill className="text-4xl font-semibold text-slate-600"></BsFillArrowLeftSquareFill>
               </span>
@@ -339,7 +357,7 @@ function CreateProject() {
             {count} / {image.length}
           </div>
         </div>
-        <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
+        <div className="w-[500px] h-auto flex flex-col gap-2 items-center">
           <span className="text-xs text-slate-500">Project Name :</span>
           <input
             type="text"
@@ -350,19 +368,14 @@ function CreateProject() {
             placeholder="your shitty project name ..."
           />
         </div>
-        <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
+        <div className="w-[600px] h-auto flex flex-col gap-2 items-center">
           <span className="text-xs text-slate-500">Description :</span>
-          <textarea
-            value={deskripsi}
-            ref={deskripsiProject}
-            onKeyDown={(e) => { deskripsiDeconstruction(e) }}
-            onInput={e => {setDeskripsi(e.target.value) }}
-            className="w-full h-36 border-[1px] border-slate-500 rounded-md p-2 focus:outline-none text-slate-500
-            text-[0.8rem]"
-            placeholder="lorem ipsum or whatever ..."
-          />
+          <div className="w-full h-full flex flex-col">
+            <MenuBar editor={editor} />
+            <EditorContent value={deskripsi} editor={editor} />
+          </div>
         </div>
-        <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
+        <div className="w-[600px] h-auto flex flex-col gap-2 items-center">
           <span className="text-xs text-slate-500">Github Link:</span>
           <input
             value={github}
@@ -373,15 +386,15 @@ function CreateProject() {
             placeholder="https:// ...."
           />
         </div>
-        <div className="w-[400px] h-auto flex flex-col gap-2 items-center">
+        <div className="w-[600px] h-auto flex flex-col gap-2 items-center">
           <span className=" text-xs text-slate-500">Tech Stack :</span>
-          <input 
+          <input
             type="text"
             onChange={e => setTechStack(e.target.value)}
             value={techStack}
             className="w-full h-10 border-[1px] border-slate-500 rounded-md p-4 focus:outline-none text-slate-500 text-[0.8rem]"
             placeholder="Start with #"
-            />
+          />
         </div>
         {
           editProject ? (

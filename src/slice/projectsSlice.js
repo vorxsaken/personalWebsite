@@ -4,11 +4,12 @@ const initialState = {
     projects: [],
     status: 'idle',
     editProject: null,
+    viewProject: null,
     error: null
 }
 
 export const getProjects = createAsyncThunk('projects/getprojects', async () => {
-    const get = await fetch('http://localhost:3010/admin/get-projects');
+    const get = await fetch('http://192.168.1.13:3010/admin/get-projects');
     const projects = await get.json();
     console.log(projects);
     return projects;
@@ -19,25 +20,39 @@ const projectSlice = createSlice({
     initialState,
     reducers: {
         addProjects(state, action){
-            const { _id, title, deskripsi, github, techStack, imageHeader } = action.payload;
+            const { _id, title, deskripsi, github, techStack, imageHeader, created_at } = action.payload;
             state.projects.push({
                 _id: _id,
                 title: title,
                 deskripsi: deskripsi,
                 github: github,
                 techStack: techStack,
-                imageHeader: imageHeader
+                imageHeader: imageHeader,
+                created_at: created_at
             })
         },
         initEditProject(state, action){
-            const { _id, title, deskripsi, github, techStack, imageHeader} = action.payload;
+            const { _id, title, deskripsi, github, techStack, imageHeader, created_at} = action.payload;
             state.editProject = {
                 _id: _id,
                 title: title,
                 deskripsi: deskripsi,
                 github: github,
                 techStack: techStack,
-                imageHeader: imageHeader
+                imageHeader: imageHeader,
+                created_at: created_at
+            }
+        },
+        initViewProject(state, action){
+            const { _id, title, deskripsi, github, techStack, imageHeader, created_at} = action.payload;
+            state.viewProject = {
+                _id: _id,
+                title: title,
+                deskripsi: deskripsi,
+                github: github,
+                techStack: techStack,
+                imageHeader: imageHeader,
+                created_at: created_at
             }
         },
         cleanEditProject(state) {
@@ -66,5 +81,5 @@ const projectSlice = createSlice({
 })
 
 
-export const { addProjects, initEditProject, cleanEditProject, filterMyProject } = projectSlice.actions;
+export const { addProjects, initEditProject, initViewProject, cleanEditProject, filterMyProject } = projectSlice.actions;
 export default projectSlice.reducer; 

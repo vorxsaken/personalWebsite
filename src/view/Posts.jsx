@@ -4,9 +4,10 @@ import Card from "../components/Card";
 import { useSelector, useDispatch } from "react-redux";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { setState } from '../slice/loaderSlice';
-import { filterMyStupidPost, initEditPost } from "../slice/postSlice";
+import { filterMyStupidPost, initEditPost, initViewPost } from "../slice/postSlice";
 import { useNavigate } from "react-router-dom"
 import { useRef } from "react";
+import { useMediaQuery, useCustomeTitle } from "../utils";
 
 function Posts() {
   const access = useSelector((state) => state.user.adminAccess);
@@ -15,6 +16,8 @@ function Posts() {
   const navigate = useNavigate();
   const sortedPost = [...posts].sort((a, b) => a.created_at - b.created_at);
   const postRef = useRef('');
+  const isSmall = useMediaQuery('(max-width: 475px)');
+  useCustomeTitle("Posts");
 
   useEffect(() => {
     return () => {
@@ -24,19 +27,19 @@ function Posts() {
 
   const filterPostList = (text) => {
     let postList = document.getElementsByClassName('post');
-    for(const post of postList) {
+    for (const post of postList) {
       let textInside = post.childNodes[access ? 1 : 0].childNodes[1].childNodes[0].innerText;
-      for(let i = 0; i < text.length; i++) {
-        if(text[i].toLowerCase() !== textInside[i].toLowerCase()) {
+      for (let i = 0; i < text.length; i++) {
+        if (text[i].toLowerCase() !== textInside[i].toLowerCase()) {
           post.classList.add('hidden')
-        } else if(text[i].toLowerCase() === textInside[i].toLowerCase()){
+        } else if (text[i].toLowerCase() === textInside[i].toLowerCase()) {
           post.removeAttribute('hidden')
         }
       }
-      if(text === '') {
+      if (text === '') {
         post.setAttribute('class', 'post relative hover:shadow-xl hover:scale-[1.01] transition-all duration-75');
       }
-    }    
+    }
   }
 
   const editPost = async (id) => {
@@ -44,7 +47,16 @@ function Posts() {
     try {
       const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader, created_at: data.created_at }));
+      dispatch(initEditPost({ 
+        _id: data._id, 
+        title: data.title, 
+        subtitle: data.subtitle, 
+        text: data.text, 
+        tags: data.tags, 
+        imageHeader: data.imageHeader, 
+        imagePic: data.imagePic, 
+        created_at: data.created_at 
+      }));
       setTimeout(() => {
         navigate("/create-post")
         dispatch(setState(false));
@@ -56,8 +68,12 @@ function Posts() {
 
   const hapusPost = (id) => {
     dispatch(setState(true));
-
-    fetch(`http://localhost:3010/admin/delete-post/${id}`).then(() => {
+    fetch(`http://localhost:3010/admin/delete-post/${id}`, {
+      method: "GET",
+      headers: {
+        "x-access-token": localStorage.getItem("_xvd")
+      }
+    }).then(() => {
       dispatch(filterMyStupidPost(id));
       dispatch(setState(false));
     })
@@ -66,9 +82,17 @@ function Posts() {
   const viewPost = async (id) => {
     dispatch(setState(true));
     try {
-      const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
+      const getPost = await fetch(`http://192.168.1.13:3010/admin/get-post/${id}`);
       const data = await getPost.json();
-      dispatch(initEditPost({ _id: data._id, title: data.title, subtitle: data.subtitle, text: data.text, tags: data.tags, imageHeader: data.imageHeader, created_at: data.created_at }));
+      dispatch(initViewPost({
+         _id: data._id, 
+         title: data.title, 
+         subtitle: data.subtitle, 
+         text: data.text, 
+         tags: data.tags, 
+         imageHeader: data.imageHeader, 
+         created_at: data.created_at 
+        }));
       setTimeout(() => {
         navigate("/post-view")
         dispatch(setState(false));
@@ -102,9 +126,9 @@ function Posts() {
         )}
         <Card
           onClick={() => { viewPost(post._id) }}
-          row={true}
+          row={isSmall ? false : true}
           tags={post.tags}
-          img={post.imageHeader}
+          img={post.imagePic}
           title={post.title}
           des={post.subtitle}
           date={post.created_at}
@@ -125,14 +149,14 @@ function Posts() {
         Posts
       </span>
       <input
-        onChange={(e) => filterPostList(e.target.value) }
+        onChange={(e) => filterPostList(e.target.value)}
         type="text"
-        className="w-96 p-5 h-6 focus:outline-none
-       border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
-       placeholder:text-slate-600 focus:placeholder:text-slate-400"
+        className={`${isSmall ? 'w-72' : 'w-96'} p-5 h-6 focus:outline-none
+        border-[1.5px] border-slate-600 rounded-md focus:border-slate-400 text-sm
+        placeholder:text-slate-600 focus:placeholder:text-slate-400`}
         placeholder="Search ..."
       />
-      <div ref={ postRef } className="postList w-full h-auto flex flex-row flex-wrap justify-center gap-6">
+      <div ref={postRef} className="postList w-full h-auto flex flex-row flex-wrap justify-center gap-6">
         {posts.length > 0 ? (
           cards
         ) : (

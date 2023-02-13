@@ -3,12 +3,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState = {
     posts: [],
     editPost: null,
+    viewPost: null,
     status: 'idle',
     error: null
 }
 
 export const getPosts = createAsyncThunk('user/getposts', async () => {
-    const get = await fetch('http://localhost:3010/admin/get-posts');
+    const get = await fetch('http://192.168.1.13:3010/admin/get-posts');
     const posts = await get.json();
 
     return posts;
@@ -30,7 +31,7 @@ const postSlice = createSlice({
             })
         },
         initEditPost(state, action) {
-            const { _id, title, subtitle, text, tags, imageHeader, created_at } = action.payload;
+            const { _id, title, subtitle, text, tags, imageHeader, imagePic, created_at } = action.payload;
             state.editPost = {
                 _id: _id,
                 title: title,
@@ -38,6 +39,20 @@ const postSlice = createSlice({
                 text: text,
                 tags: tags,
                 imageHeader: imageHeader,
+                imagePic: imagePic,
+                created_at: created_at
+            }
+        },
+        initViewPost(state, action) {
+            const { _id, title, subtitle, text, tags, imageHeader, imagePic, created_at } = action.payload;
+            state.viewPost = {
+                _id: _id,
+                title: title,
+                subtitle: subtitle,
+                text: text,
+                tags: tags,
+                imageHeader: imageHeader,
+                imagePic: imagePic,
                 created_at: created_at
             }
         },
@@ -67,5 +82,5 @@ const postSlice = createSlice({
     }
 })
 
-export const { addPost, initEditPost, cleanInitEditPost, filterMyStupidPost } = postSlice.actions;
+export const { addPost, initEditPost, initViewPost, cleanInitEditPost, filterMyStupidPost } = postSlice.actions;
 export default postSlice.reducer;

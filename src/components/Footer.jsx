@@ -8,11 +8,11 @@ function Footer() {
             <FaInstagram className='text-pink-400 hover:text-pink-600 cursor-pointer text-3xl'></FaInstagram>
             <FaDiscord className='text-blue-400 hover:text-blue-600 cursor-pointer text-3xl'></FaDiscord>
         </div>
-        <div className='flex flex-col py-4 items-center relative text-sm'>
+        <div className='flex flex-col py-4 text-center items-center relative md:text-base text-xs gap-2'>
             <div>Made with <span className='text-slate-800 mr-[4px]'>React.js</span>
              and <span className='text-slate-800 mr-[4px]'>TailwindCss</span> 
              Hosted in <span className='text-slate-800 mr-[4px]'>Github</span></div>
-            <div>Copyright 🍣 2022 Vorxsaken</div>
+            <div className='text-xs font-light'>Copyright 🍣 2022 Vorxsaken</div>
         </div>
     </div>
   )

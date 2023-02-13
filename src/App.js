@@ -39,16 +39,18 @@ function App() {
 
   return (
     <div className="overflow-x-hidden flex flex-col">
-      {
-        loader && (
-          <motion.span
-            initial={{ x: -1000 }} animate={{ x: 0 }}
-            transition={{ duration: 0.5, ease: [0, .53, .32, 1] }}
-            className="fixed top-0 w-[100%] h-[4.5px]
+      <AnimatePresence exitBeforeEnter>
+        {
+          loader && (
+            <motion.span
+              initial={{ x: -1000 }} animate={{ x: 0 }} exit={{ x: -1000 }}
+              transition={{ duration: 0.3 }}
+              className="fixed top-0 w-[100%] h-[4.5px]
             rounded-md bg-gradient-to-r from-red-500 to-purple-500 z-50 animate-pulse">
-          </motion.span>
-        )
-      }
+            </motion.span>
+          )
+        }
+      </AnimatePresence>
       <Navbar />
       <main className="mt-16 h-auto select-none flex justify-center items-center scroll-auto">
         <AnimatePresence exitBeforeEnter={true} initial={true}>
@@ -70,20 +72,22 @@ function App() {
           </Routes>
         </AnimatePresence>
       </main>
-      {
-        isToTop && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
-            onClick={scrollTotop}
-            className="fixed bottom-8 right-10 w-10 h-10 rounded-md shadow-lg bg-slate-500 flex 
+      <AnimatePresence exitBeforeEnter>
+        {
+          isToTop && (
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ y: 100, opacity: 0 }}
+              transition={{ duration: 0.8, type: "spring" }}
+              onClick={scrollTotop}
+              className="fixed bottom-8 right-5 w-10 h-10 rounded-md shadow-lg bg-slate-500 flex 
           justify-center items-center cursor-pointer z-50">
-            <IoIosArrowUp className="text-2xl text-white " />
-          </motion.div>
-        )
-      }
+              <IoIosArrowUp className="text-2xl text-white " />
+            </motion.div>
+          )
+        }
+      </AnimatePresence>
       <Footer />
     </div>
   );

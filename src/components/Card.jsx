@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaCalendarWeek } from "react-icons/fa";
 import { getDate, hashtag } from '../utils';
+import HTMLReactParser from 'html-react-parser';
 
 function Card({ img, title, des, row, tags, onClick, date }) {
     // apakah card berbentuk row ?
@@ -11,7 +12,8 @@ function Card({ img, title, des, row, tags, onClick, date }) {
     }
     //memotong deskripsi jika panjangnya melebihi 130 karakter
     const Desc = () => {
-        return des.length > 130 ? des.substr(0, 130) + ' ...' : des;
+        const deskripsi = des.length > 130 ? des.substr(0, 130) + ' ...' : des; 
+        return HTMLReactParser(deskripsi);
     }
 
     return (
@@ -21,7 +23,7 @@ function Card({ img, title, des, row, tags, onClick, date }) {
         bg-cover bg-center`} style={{ backgroundImage: `url(${img})` }} >
             </div>
             {/* content */}
-            <div className='w-full min-h-[120px] min-w-[270px] max-w-[270px] flex flex-col gap-2 overflow-hidden'>
+            <div className='w-full min-h-[150px] min-w-[270px] max-w-[270px] flex flex-col gap-2 overflow-hidden'>
                 <p className='w-full text-lg text-left break-words font-bold text-slate-800'>{Title()}</p>
                 <span className='flex flex-row gap-1 items-center'>
                     <FaCalendarWeek className='text-xs font-bold text-slate-800' />

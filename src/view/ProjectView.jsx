@@ -1,14 +1,20 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { FaGithub } from 'react-icons/fa'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, } from "react-icons/io"
-import { useRef, useEffect } from 'react'
-import { cleanEditProject } from "../slice/projectsSlice"
+import { useRef } from 'react'
+import { useCustomeTitle } from '../utils'
+import HTMLReactParser from 'html-react-parser'
+import { useMediaQuery } from "../utils"
+
 export default function ProjectView() {
-    const project = useSelector(state => state.projects.editProject)
-    const carausel = useRef(null)
-    const dispatch = useDispatch();
+    const project = useSelector(state => state.projects.viewProject)
+    const carausel = useRef(null);
+    const isSmall = useMediaQuery('(max-width: 427px)');
+    const isMedium = useMediaQuery('(min-width: 428px)'); 
+    const isBig = useMediaQuery(`(min-width: 1024px)`);
+    useCustomeTitle(project.title);
 
     const scrollLeft = () => {
         carausel.current.scrollLeft -= 350
@@ -23,12 +29,7 @@ export default function ProjectView() {
         return getTechStackArray;
     }
 
-    useEffect(() => {
-        return () => {
-            dispatch(cleanEditProject())
-        }
-    }, [])
-    
+
     return (
         <motion.div
             initial={{ y: 100, opacity: 0 }}
@@ -37,9 +38,9 @@ export default function ProjectView() {
             transition={{ duration: 0.3, ease: [0, 0.53, 0.32, 1] }}
             className="w-screen h-auto min-h-screen p-8 flex flex-col items-center gap-8 scroll-auto"
         >
-            <div className='w-full h-auto flex flex-row items-start justify-center mt-12 gap-8'>
+            <div className='w-full h-auto flex flex-row flex-wrap items-start justify-center mt-12 gap-8'>
                 <div className='w-auto h-auto flex flex-col justify-center gap-4'>
-                    <div className='group w-[600px] h-[350px] relative overflow-hidden'>
+                    <div className={`group relative overflow-hidden ${isBig ? 'w-[600px] h-[350px]' : isMedium ? 'w-96 h-56' : isSmall && 'w-80 h-52'}`}>
                         <IoIosArrowDropleftCircle className='text-4xl text-white absolute cursor-pointer hover:scale-125 
                             transition-all duration-150 ease-in-out -left-10 top-40 active:scale-110 group-hover:left-7 drop-shadow-2xl
                             group-hover:opacity-100 opacity-0'
@@ -49,8 +50,8 @@ export default function ProjectView() {
                         scroll-smooth'>
                             {
                                 project.imageHeader.src.map(image => (
-                                    <div key={image.url} className='w-[600px] h-[350px] shrink-0 snap-center snap-always'>
-                                        <img src={image.url} className='h-full w-full' />
+                                    <div key={image.url} className={`shrink-0 snap-center snap-always ${isBig ? 'w-[600px] h-[350px]' : isMedium ? 'w-96 h-56' : isSmall && 'w-80 h-52'}`}>
+                                        <img alt='images' src={image.url} className='h-full w-full' />
                                     </div>
                                 ))
                             }
@@ -84,12 +85,12 @@ export default function ProjectView() {
 
                     </div>
                 </div>
-                <div className='w-[600px] flex flex-col justify-start gap-4'>
-                    <h3 className='text-slate-700'>
+                <div className='w-[600px] flex flex-col justify-center gap-4'>
+                    <span className={`text-slate-700 font-extrabold ${isSmall ? 'text-2xl' : 'text-4xl'}`}>
                         {project.title}
-                    </h3>
-                    <p className='text-slate-600 text-md font-light text-justify'>
-                        {project.deskripsi}
+                    </span>
+                    <p className={`text-slate-600 text-md font-light ${isSmall ? 'text-xs' : 'text-base'}`}>
+                        {HTMLReactParser(project.deskripsi)}
                     </p>
                 </div>
             </div>

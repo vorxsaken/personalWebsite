@@ -7,7 +7,7 @@ const initialState = {
 export const authUser = createAsyncThunk('user/auth', async () => {
     var token = null;
     var payload = null;
-    if(localStorage.length != 0){
+    if(localStorage.length !== 0){
         token = localStorage.getItem("_xvd")
     }
     await fetch('http://localhost:3010/admin/auth', {
@@ -20,6 +20,7 @@ export const authUser = createAsyncThunk('user/auth', async () => {
     .then(result => result.json())
     .then((json) => {
         payload = json.adminAccess
+        console.log("decoded : ", json.decoded)
     })
     .catch((err) => { console.log(err) })
     
@@ -29,11 +30,6 @@ export const authUser = createAsyncThunk('user/auth', async () => {
 const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {
-        updatePost(state, action){
-            console.log('dd');
-        }
-    },
     extraReducers(builder){
         builder
         .addCase(authUser.fulfilled, (state, action) => {

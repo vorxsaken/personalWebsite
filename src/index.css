@@ -27,6 +27,47 @@ body {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .profile{
+    width: 400px;
+    height: 130px;
+  }
+
+  .profile[data-isOpen="true"] {
+    top: 2.5rem;
+    width: 550px;
+    height: 250px;
+    font-size: 0.7rem;
+  }
+
+  .profile[data-isOpen="true"] .profile-icon {
+    font-size: 1.7rem
+  }
+
+  .nav {
+    height: 4rem;
+  }
+
+  .nav[data-isOpen = "true"] {
+    height: 20rem;
+  }
+
+  @media only screen and (max-width: 475px) {
+    .profile{
+      width: 320px;
+      margin-top: 40px;
+    }
+
+    .profile[data-isOpen="true"]{
+      margin-top: 1.5rem;
+      width: 330px;
+      font-size: 0.7rem;
+    }
+
+    .profile[data-isOpen="true"] .profile-icon {
+      font-size: 1.3rem
+    }
+  }
 }
 @tailwind base;
 @layer base {

@@ -38,7 +38,7 @@ const MenuBar = ({ editor }) => {
   };
 
   return (
-    <div className="w-[700px] py-2 px-2 flex flex-wrap justify-center flex-row gap-1">
+    <div className="w-full py-2 px-2 flex flex-wrap justify-center flex-row gap-1">
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={

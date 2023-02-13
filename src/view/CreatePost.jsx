@@ -13,7 +13,8 @@ import MenuBar from "../components/MenuBar";
 import { useDispatch } from "react-redux";
 import { addPost, cleanInitEditPost, filterMyStupidPost, getPosts } from "../slice/postSlice";
 import { useSelector } from "react-redux";
-import axios from 'axios';
+import { useCustomeTitle } from "../utils"
+import Compressor from "compressorjs"
 
 function CreatePost() {
   const file = useRef(0);
@@ -22,33 +23,61 @@ function CreatePost() {
   const [subtitle, setSubtitle] = useState("");
   const [text, setText] = useState("");
   const [image, setImage] = useState(0);
+  const [pic, setPic] = useState(0);
   const [blob, setBlob] = useState(null);
   const [tags, setTags] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const editPost = useSelector(state => state.posts.editPost)
   const dispatch = useDispatch();
   var formData = new FormData();
+  useCustomeTitle(editPost ? "Edit Post" : "Add Post");
 
-  const initForm = () => {
-    formData.append("file", image);
-    formData.append("title", title);
-    formData.append('subtitle', subtitle)
-    formData.append("text", text);
-    formData.append("tags", tags);
-    formData.append("created_at", Date.now());
+  const setAndConvertImage = (file) => {
+    new Compressor(file, {
+      quality: 0.8,
+      width: 200,
+      mimeType: "image/webp",
+      success(res) {
+        setPic(res);
+      },
+      error(err) {
+        console.log(err);
+      }
+    })
+
+    new Compressor(file, {
+      quality: 0.5,
+      width: 700,
+      mimeType: "image/webp",
+      success(res) {
+        setImage(res)
+      },
+      error(err) {
+        console.log(err);
+      }
+    })
   }
 
   const post = async () => {
     if (title && text && image && tags) {
       setIsLoading(true);
-      initForm();
+      formData.append("pic", pic);
+      formData.append("file", image);
+      formData.append("title", title);
+      formData.append('subtitle', subtitle)
+      formData.append("text", text);
+      formData.append("tags", tags);
+      formData.append("created_at", Date.now());
       await fetch("http://localhost:3010/admin/upload-post", {
         method: "POST",
+        headers: {
+          "x-access-token": localStorage.getItem("_xvd")
+        },
         body: formData,
       })
         .then(payload => payload.json())
         .then((data) => {
-          dispatch(addPost({ _id: data.id, title, subtitle, text, imageHeader: data.imageUrl, tags, created_at: data.created_at }))
+          dispatch(addPost({ _id: data.id, title, subtitle, text, imageHeader: data.imageHeader, tags, created_at: data.created_at }))
         })
 
       setTitle("");
@@ -70,18 +99,25 @@ function CreatePost() {
       const form = new FormData();
       form.append("id", id);
       form.append("file", image);
+      form.append("pic", pic);
       form.append("title", title);
       form.append('subtitle', subtitle);
       form.append("text", text);
       form.append("tags", tags);
       form.append('created_at', Date.now());
-      axios.post("http://localhost:3010/admin/update-post", form)
+      fetch("http://localhost:3010/admin/update-post", {
+        method: "POST",
+        headers: {
+          "x-access-token": localStorage.getItem("_xvd")
+        },
+        body: form
+      })
         .then(() => {
           dispatch(filterMyStupidPost(id));
           setTimeout(() => {
             dispatch(getPosts());
             setIsLoading(false);
-            window.alert("Upload Success");
+            window.alert("Update Success");
           }, 1500)
         }).catch((err) => {
           console.log(err);
@@ -116,16 +152,11 @@ function CreatePost() {
     }
   });
 
-  const imageURL = () => {
+  useEffect(() => {
     if (typeof image == "object" && image != null) {
       let img = URL.createObjectURL(image);
       setBlob(img);
-      return
     }
-  };
-
-  useEffect(() => {
-    imageURL();
   }, [image]);
 
   useEffect(() => {
@@ -135,12 +166,15 @@ function CreatePost() {
       setSubtitle(editPost.subtitle);
       setText(editPost.text);
       setImage(editPost.imageHeader);
+      setPic(editPost.imagePic);
       setBlob(editPost.imageHeader);
       setTags(editPost.tags);
       return () => {
         dispatch(cleanInitEditPost())
       };
+    } else {
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -179,7 +213,7 @@ function CreatePost() {
       <input
         className="hidden"
         onChange={(e) => {
-          setImage(e.target.files[0]);
+          setAndConvertImage(e.target.files[0]);
         }}
         ref={file}
         type="file"

@@ -3,16 +3,18 @@ import Card from "../components/Card";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from 'react-redux';
 import { setState } from '../slice/loaderSlice'
-import { initEditProject, filterMyProject } from "../slice/projectsSlice";
+import { initEditProject, filterMyProject, initViewProject } from "../slice/projectsSlice";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"
+import { useCustomeTitle } from "../utils";
 
 function Projects() {
   const access = useSelector(state => state.user.adminAccess);
   const projects = useSelector(state => state.projects.projects);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+  useCustomeTitle("Projects");
+
   const editProjects = (id) => {
     dispatch(setState(true));
     fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
@@ -34,7 +36,12 @@ function Projects() {
   const deleteProject = async (id) => {
     dispatch(setState(true));
 
-    await fetch(`http://localhost:3010/admin/delete-project/${id}`).then(result => result.json()).then(data => {
+    await fetch(`http://localhost:3010/admin/delete-project/${id}`, {
+      method: "GET",
+      headers: {
+        "x-access-token": localStorage.getItem("_xvd")
+      }
+    }).then(result => result.json()).then(data => {
       dispatch(filterMyProject(id));
       dispatch(setState(false));
     })
@@ -43,8 +50,8 @@ function Projects() {
   const goToProject = async (id) => {
     dispatch(setState(true));
 
-    await fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
-      dispatch(initEditProject({
+    await fetch(`http://192.168.1.13:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
+      dispatch(initViewProject({
         _id: data[0]._id,
         title: data[0].title,
         github: data[0].github,
