@@ -9,7 +9,7 @@ import { SiTailwindcss, SiVuetify, SiCss3 } from "react-icons/si"
 import { useMediaQuery, useCustomeTitle } from '../utils'
 
 const titleWord = "Vorxsaken"
-const subtitleWord = "To be Honest i dont know what to put in this page since its already in the home page, so in here i'll just put my strength, you can click image below to see it."
+const subtitleWord = `To be Honest i dont know what to put in this page since its already in the home page, so in here i'll just put my strength, you can click image below to see it.`
 
 const listContainerVariants = {
   init: {},

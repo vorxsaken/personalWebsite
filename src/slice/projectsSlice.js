@@ -9,7 +9,7 @@ const initialState = {
 }
 
 export const getProjects = createAsyncThunk('projects/getprojects', async () => {
-    const get = await fetch('http://192.168.1.13:3010/admin/get-projects');
+    const get = await fetch('http://localhost:3010/admin/get-projects');
     const projects = await get.json();
     console.log(projects);
     return projects;

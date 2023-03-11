@@ -120,8 +120,8 @@ function Home() {
               Hi There, Iam <span className="text-slate-800">Vorxsaken</span>
             </p>
             <p className="text-xs font-normal text-center text-black max-w-md">
-              Iam a self taught web/software developer, i mainly code in javascript using reactJS, vueJS framework or just vanilla, currently iam still try
-              get used to using TypeScript, I hope you enjoy the content of this website or find
+              Iam a self taught web/software developer, i mainly code in javascript using reactJS, vueJS framework or just vanilla, 
+              currently iam still try get used to using TypeScript, I hope you enjoy the content of this website or find
               something useful.
             </p>
           </div>

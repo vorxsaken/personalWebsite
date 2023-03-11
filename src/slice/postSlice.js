@@ -9,7 +9,7 @@ const initialState = {
 }
 
 export const getPosts = createAsyncThunk('user/getposts', async () => {
-    const get = await fetch('http://192.168.1.13:3010/admin/get-posts');
+    const get = await fetch('http://localhost:3010/admin/get-posts');
     const posts = await get.json();
 
     return posts;

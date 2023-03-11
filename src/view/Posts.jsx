@@ -82,7 +82,7 @@ function Posts() {
   const viewPost = async (id) => {
     dispatch(setState(true));
     try {
-      const getPost = await fetch(`http://192.168.1.13:3010/admin/get-post/${id}`);
+      const getPost = await fetch(`http://localhost:3010/admin/get-post/${id}`);
       const data = await getPost.json();
       dispatch(initViewPost({
          _id: data._id, 

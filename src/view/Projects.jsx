@@ -50,7 +50,7 @@ function Projects() {
   const goToProject = async (id) => {
     dispatch(setState(true));
 
-    await fetch(`http://192.168.1.13:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
+    await fetch(`http://localhost:3010/admin/get-project/${id}`).then(result => result.json()).then((data) => {
       dispatch(initViewProject({
         _id: data[0]._id,
         title: data[0].title,
